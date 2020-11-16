@@ -1,0 +1,34 @@
+
+*mu4e Dahsboard*
+
+mu4e dahsboard provides a new =mu4e= org link type that allows to
+execute a mu4e query:
+
+[[./dashboard.png]]
+
+Syntax is quite intuitive:
+
+#+begin_src org
+[[mu4e:query|format|count][description]]
+#+end_src
+
+=query= must be a valid mu4e query and =count= (optional) is the maxmimum
+number of results to be returned. When the link is clicked,
+=mu4e-headers-search= is called with the proper query.
+
+#+begin_src org
+[[mu4e:flag:unread][All unread]]
+[[mu4e:flag:unread||10][Last 10 unread]]
+#+end_src
+
+=format= can be used to specify that =query= results are to be counted in
+order to update the descritption using the given format:
+
+#+begin_src org
+[[mu4e:flag:unread|(%3d)][(---)]]
+#+end_src
+
+With the example above, when the link is cliked, the =---= part will be
+replaced by the number of unread mails.
+l
+A dashboard can be built by writing an org file containing such links.
