@@ -1,9 +1,9 @@
 
 *mu4e Dahsboard*
 
-mu4e dahsboard provides a new =mu4e= org link type that allows to
-execute varius mu4e queries when clicked. Such links can be organised
-as a dashboard by simply writing an org file as shown below:
+mu4e dahsboard provides a new =mu4e= org link type that allows to execute
+various mu4e queries when clicked. Such links can be organised into a
+dashboard, by simply writing an org file as shown below:
 
 [[./dashboard.png]]
 
@@ -31,5 +31,3 @@ order to update the descritption using the given format:
 
 With the example above, when the link is cliked, the =---= part will be
 replaced by the number of unread mails.
-l
-A dashboard can be built by writing an org file containing such links.
