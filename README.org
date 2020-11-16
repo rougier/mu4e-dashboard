@@ -2,7 +2,8 @@
 *mu4e Dahsboard*
 
 mu4e dahsboard provides a new =mu4e= org link type that allows to
-execute a mu4e query:
+execute varius mu4e queries when clicked. Such links can be organised
+as a dashboard by simply writing an org file as shown below:
 
 [[./dashboard.png]]
 
