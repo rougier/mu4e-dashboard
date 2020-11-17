@@ -27,10 +27,10 @@
 (require 'subr-x)
 
 ;; Install the mu4e link type
-(org-add-link-type "mu4e" 'mu4e-dashboard-follow-link)
-
-
-(defun mu4e-dashboard-follow-link (path)
+(org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
+ 
+  
+(defun mu4e-dashboard-follow-mu4e-link (path)
   "Process a mu4e link"
   
   (let* ((link    (org-element-context))
