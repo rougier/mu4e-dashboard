@@ -25,6 +25,7 @@
 ;; see <http://www.gnu.org/licenses/>.
 
 (require 'subr-x)
+(require 'aio)
 
 ;; Install the mu4e link type
 (org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
@@ -32,7 +33,6 @@
   
 (defun mu4e-dashboard-follow-mu4e-link (path)
   "Process a mu4e link"
-  
   (let* ((link    (org-element-context))
          (query   (string-trim (nth 0 (split-string path "|"))))
          (fmt     (nth 1 (split-string path "|")))
@@ -43,13 +43,13 @@
       (mu4e-headers-search query))
 
      ;; Regular query with limit
-     (count
+     ((and count (> count 0))
       (let ((mu4e-headers-results-limit (string-to-number count)))
         (mu4e-headers-search query)))
 
      ;; Query count and link description update
-     (fmt (mu4e-dashboard-update-link link)))))
-      
+     ((and fmt (> (length fmt) 0))
+       (mu4e-dashboard-update-link link)))))
 
 (defun mu4e-dashboard-update-link (link)
   "Update content of a formatted mu4e links"
@@ -60,8 +60,9 @@
          (count (nth 2 (split-string path "|")))
          (beg   (org-element-property :contents-begin link))
          (end   (org-element-property :contents-end link))
-         (size  (- end beg)))
-    (if fmt
+         (size  (- end beg))
+         )
+    (if (and fmt (> (length fmt) 0))
         (let* ((command (format "mu find %s 2> /dev/null | wc -l" query))
                (output (string-to-number (shell-command-to-string command)))
                (output  (format fmt output)))
@@ -71,15 +72,58 @@
             (insert (if (<= (length output) size) output
                       (make-string size ?+))))))))
 
-(defun mu4e-dashboard-upate-all-links ()
-  "Update content of all formatted mu4e links"
-  
+
+(defun async-shell-command-to-string (command callback)
+  (let* ((display-buffer-alist (list (cons "\\*Async Shell Command\\*.*"
+                                       (cons #'display-buffer-no-window nil))))
+         (output-buffer (generate-new-buffer "*Async Shell Command*"))
+         (proc (progn
+                 (async-shell-command command output-buffer)
+                 (get-buffer-process output-buffer))))
+    (if (process-live-p proc)
+        (set-process-sentinel proc
+                              (lambda (process signal)
+                                (when (memq (process-status process) '(exit signal))
+                                  (with-current-buffer output-buffer
+                                    (funcall callback (buffer-string)))
+                                  (kill-buffer output-buffer))))
+      (message "No process running."))))
+
+
+(defun mu4e-dashboard-upate-all-async ()
+  "Update content of all formatted mu4e links in an asynchronous way"
+  (interactive)
+  (mu4e-dashboard-clear-all-links)
+  (let ((buffer (current-buffer)))
+    (org-element-map (org-element-parse-buffer) 'link
+      (lambda (link)
+        (when (string= (org-element-property :type link) "mu4e")
+          (let* ((path  (org-element-property :path link))
+                 (query (string-trim (nth 0 (split-string path "|"))))
+                 (fmt   (nth 1 (split-string path "|")))
+                 (beg   (org-element-property :contents-begin link))
+                 (end   (org-element-property :contents-end link))
+                 (size  (- end beg)))
+            (if (and fmt (> (length fmt) 0))
+                (let ((command (format "mu find %s 2> /dev/null | wc -l" query)))
+                  (async-shell-command-to-string command
+                      (lambda (output)
+                        (with-current-buffer buffer
+                          (save-excursion
+                            (delete-region beg end)
+                            (goto-char beg)
+                            (insert (format fmt (string-to-number output)))))))))))))))
+
+(defun mu4e-dashboard-upate-all-sync ()
+  "Update content of all formatted mu4e links in a synchronous way"
   (interactive)
   (mu4e-dashboard-clear-all-links)
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
       (when (string= (org-element-property :type link) "mu4e")
-        (mu4e-dashboard-update-link link)))))
+        (mu4e-dashboard-update-link link)
+        (redisplay t)))))
+
 
 
 (defun mu4e-dashboard-clear-link (link)
@@ -96,7 +140,7 @@
           (goto-char beg)
           (insert (format "(%s)" (make-string (- size 2) ?-)))))))
 
-(defun mu4e-dashboard-clear-all-links ()
+(defun mu4e-dashboard-clear-all ()
   "Remove content of all formatted mu4e links"
   
   (interactive)

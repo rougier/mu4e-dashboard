@@ -1,30 +1,30 @@
 
-* Mu for Emacs (mu4e)                                        *[[mu4e:flag:unread|%3d Unread][ 16 Unread]]*
+* Mu for Emacs (mu4e)                                        *[[mu4e:flag:unread|%3d Unread][ 12 Unread]]*
 
-[[mu4e:flag:unread][Unread]] [[mu4e:flag:unread|(%3d)][( 16)]] .... /[u]/  [[mu4e:date:today..now][Today]] [[mu4e:date:today..now|(%3d)][( 10)]] .......... /[t]/  *Compose* ...... /[c]/
-[[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox][Inbox]]  [[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox|(%3d)][( 28)]] .... /[i]/  [[mu4e:date:2d..today and not date:today..now][Yesterday]] [[mu4e:date:2d..today and not date:today..now|(%3d)][( 66)]] ...... /[y]/  *Update* ....... /[p]/
-[[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts][Drafts]] [[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts|(%3d)][(  2)]] .... /[d]/  [[mu4e:date:7d..now][Last week]] [[mu4e:date:7d..now|(%4d)][( 932)]] ..... /[w]/  *Switch context* /[/]/
-[[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent][Sent]] [[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent|(%5d)][( 7016)]] .... /[s]/  [[mu4e:date:4w..][Last month]] [[mu4e:date:4w..|(%4d)][(3514)]] .... /[m]/  *Quit* ......... /[q]/
+[[mu4e:flag:unread][Unread]] /[[mu4e:flag:unread|(%3d)][( 12)]]/ .... [u]  [[mu4e:date:today..now][Today]] /[[mu4e:date:today..now|(%3d)][(126)]]/ .......... [t]  *Compose* ...... [C]
+[[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox][Inbox]]  /[[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox|(%3d)][( 25)]]/ .... [i]  [[mu4e:date:2d..today and not date:today..now][Yesterday]] /[[mu4e:date:2d..today and not date:today..now|(%3d)][(210)]]/ ...... [y]  *Update* ....... [U]
+[[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts][Drafts]] /[[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts|(%3d)][(  2)]]/ .... [d]  [[mu4e:date:7d..now][Last week]] /[[mu4e:date:7d..now|(%4d)][( 933)]]/ ..... [w]  *Switch context* [;]
+[[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent][Sent]] /[[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent|(%5d)][( 7030)]]/ .... [s]  [[mu4e:date:4w..][Last month]] /[[mu4e:date:4w..|(%4d)][(3517)]]/ .... [m]  *Quit* ......... [q]
 
 * Saved searches
 
-[[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive][Archive]] [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive|(%6d)][( 43503)]] ...... [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive||100][100]] - [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive||500][500]]  [[mu4e:flag:attach][ Attachments]] [[mu4e:flag:attach|(%5d)][( 9866)]] ... [[mu4e:flag:attach||99999][all]] - [[mu4e:size:10M..][big]]
-[[mu4e:flag:flagged][Important]] [[mu4e:flag:flagged|(%4d)][( 274)]] ...... [[mu4e:flag:flagged||100][100]] - [[mu4e:flag:flagged||500][500]]   [[mu4e:flag:encrypted][Encrypted]] [[mu4e:flag:encrypted|(%4d)][( 873)]] ...... [[mu4e:flag:encrypted||100][100]] - [[mu4e:flag:encrypted||500][500]]
+[[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive][Archive]] /[[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive|(%6d)][( 43664)]]/ ...... [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive||100][100]] - [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive||500][500]]  [[mu4e:flag:attach][ Attachments]] /[[mu4e:flag:attach|(%5d)][( 9892)]]/ ... [[mu4e:flag:attach||99999][all]] - [[mu4e:size:10M..][big]]
+[[mu4e:flag:flagged][Important]] /[[mu4e:flag:flagged|(%4d)][( 277)]]/ ...... [[mu4e:flag:flagged||100][100]] - [[mu4e:flag:flagged||500][500]]   [[mu4e:flag:encrypted][Encrypted]] /[[mu4e:flag:encrypted|(%4d)][( 885)]]/ ...... [[mu4e:flag:encrypted||100][100]] - [[mu4e:flag:encrypted||500][500]]
 
 ** People 
 
-[[mu4e:from:rms@gnu.org][Richard Stallman]] [[mu4e:from:rms@gnu.org|(%3d)][(504)]] ............................ [[mu4e:mu4e:from:rms@gnu.org||100][100]] - [[mu4e:from:rms@gnu.org||500][500]] - [[mu4e:from:rms@gnu.org||9999][all]]
-[[mu4e:from:djcb@djcbsoftware.nl][Dirk-Jan C. Binnema]] [[mu4e:from:djcb@djcbsoftware.nl|(%2d)][(50)]] .......................... [[mu4e:from:djcb@djcbsoftware.nl||100][100]] - [[mu4e:from:djcb@djcbsoftware.nl||500][500]] - [[mu4e:from:djcb@djcbsoftware.nl||9999][all]]
+[[mu4e:from:rms@gnu.org][Richard Stallman]] /[[mu4e:from:rms@gnu.org|(%3d)][(506)]]/ ............................ [[mu4e:mu4e:from:rms@gnu.org||100][100]] - [[mu4e:from:rms@gnu.org||500][500]] - [[mu4e:from:rms@gnu.org||9999][all]]
+[[mu4e:from:djcb@djcbsoftware.nl][Dirk-Jan C. Binnema]] /[[mu4e:from:djcb@djcbsoftware.nl|(%2d)][(50)]]/ .......................... [[mu4e:from:djcb@djcbsoftware.nl||100][100]] - [[mu4e:from:djcb@djcbsoftware.nl||500][500]] - [[mu4e:from:djcb@djcbsoftware.nl||9999][all]]
 
 ** Date
 
-[[mu4e:date:20200101..20201231][Year 2020]] /[[mu4e:date:20200101..20201231|(%5d)][(27657)]]/ [[mu4e:date:20190101..20191231][       Year 2019]] /[[mu4e:date:20190101..20191231|(%5d)][(19845)]]/ [[mu4e:date:20180101..20181231][       Year 2018]] /[[mu4e:date:20180101..20181231|(%5d)][( 3038)]]/
+[[mu4e:date:20200101..20201231][Year 2020]] /[[mu4e:date:20200101..20201231|(%5d)][(27811)]]/ [[mu4e:date:20190101..20191231][       Year 2019]] /[[mu4e:date:20190101..20191231|(%5d)][(19845)]]/ [[mu4e:date:20180101..20181231][       Year 2018]] /[[mu4e:date:20180101..20181231|(%5d)][( 3038)]]/
 
 ** Mailing lists
 
 [[mu4e:list:emacs-devel.gnu.org
-][Emacs development]] [[mu4e:list:emacs-devel.gnu.org|(%4d)][(2981)]] .......................... [[mu4e:list:emacs-devel.gnu.org||100][100]] - [[mu4e:list:emacs-devel.gnu.org||500][500]] - [[mu4e:list:emacs-devel.gnu.org||9999][all]]
-[[mu4e:list:mu-discuss.googlegroups.com][Mu4e discussions]] [[mu4e:list:mu-discuss.googlegroups.com|(%4d)][( 266)]] ........................... [[mu4e:list:mu-discuss.googlegroups.com||100][100]] - [[mu4e:list:mu-discuss.googlegroups.com||500][500]] - [[mu4e:list:mu-discuss.googlegroups.com||9999][all]]
+][Emacs development]] /[[mu4e:list:emacs-devel.gnu.org|(%4d)][(3006)]]/ .......................... [[mu4e:list:emacs-devel.gnu.org||100][100]] - [[mu4e:list:emacs-devel.gnu.org||500][500]] - [[mu4e:list:emacs-devel.gnu.org||9999][all]]
+[[mu4e:list:mu-discuss.googlegroups.com][Mu4e discussions]] /[[mu4e:list:mu-discuss.googlegroups.com|(%4d)][( 265)]]/ ........................... [[mu4e:list:mu-discuss.googlegroups.com||100][100]] - [[mu4e:list:mu-discuss.googlegroups.com||500][500]] - [[mu4e:list:mu-discuss.googlegroups.com||9999][all]]
 
 * Information
 
