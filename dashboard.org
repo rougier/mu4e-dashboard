@@ -34,4 +34,21 @@
             [[mailto:nicolas.rougier@gmail.com][<nicolas.rougier@gmail.com>]] /(gmail)/
             [[mailto:nicolas.rougier@u-bordeaux.fr][<nicolas.rougier@u-bordeaux.fr>]] /(univ)/
 
+* Configuration
+
+Call [[elisp:mu4e-dashboard-activate][mu4e-dashboard-activate]] to activate automatic update and key bindings.
+
 #+STARTUP: showall showstars indent
+
+#+UPDATE: 120
+
+#+KEYMAP: "u" | (mu4e-headers-search "flag:unread")
+#+KEYMAP: "i" | (mu4e-headers-search ":m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox")
+#+KEYMAP: "d" | (mu4e-headers-search ":m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts")
+#+KEYMAP: "s" | (mu4e-headers-search ":m:/inria/sent or m:/gmail/sent or m:/univ/sent")
+
+#+KEYMAP: "C" | (mu4e-compose-new)
+#+KEYMAP: "U" | (mu4e-update-index)
+#+KEYMAP: ";" | (mu4e-context-switch)
+#+KEYMAP: "q" | (kill-buffer)
+
