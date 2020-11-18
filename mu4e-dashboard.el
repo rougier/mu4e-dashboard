@@ -1,4 +1,4 @@
-;;; mu4e-dashboard.el --- Mu4e dashboard using mu4e org links -*- lexical-binding: t -*-
+;;; mu4e-dashboard.el --- Mu4e dashboard -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020 Nicolas P. Rougier
 
@@ -23,16 +23,27 @@
 
 ;; For a full copy of the GNU General Public License
 ;; see <http://www.gnu.org/licenses/>.
-
 (require 'subr-x)
-(require 'aio)
 
 ;; Install the mu4e link type
 (org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
- 
-  
+
+;; Minor mode to simulate buffer local keybindings.
+(define-minor-mode mu4e-dashboard-mode
+  "Minor mode to simulate buffer local keybindings."
+  :keymap (make-sparse-keymap)
+  :init-value nil)
+
+
 (defun mu4e-dashboard-follow-mu4e-link (path)
-  "Process a mu4e link"
+  "Process a mu4e link of the form [[mu4e:query|limit|fmt][description]].
+
+If FMT is not specified or is nil, clicking on the link calls
+mu4e with the specified QUERY (with or without the given
+LIMIT). If FMT is specified, the descritpion of the link is
+updated with the QUERY count formatted using the provided
+format (for example \"%4d\")."
+  
   (let* ((link    (org-element-context))
          (query   (string-trim (nth 0 (split-string path "|"))))
          (fmt     (nth 1 (split-string path "|")))
@@ -51,8 +62,17 @@
      ((and fmt (> (length fmt) 0))
        (mu4e-dashboard-update-link link)))))
 
+
 (defun mu4e-dashboard-update-link (link)
-  "Update content of a formatted mu4e links"
+  "Update content of a formatted mu4e LINK.
+
+A formatted link is a link of the form
+[[mu4e:query|limit|fmt][description]] where fmt is a non nil
+string describing the format. When a link is cleared, the
+description is replaced by a string for the form \"(---)\" and
+have the same size as the current description. If the given
+format is too big for the current description, description is
+replaced with + signs."
   
   (let* ((path  (org-element-property :path link))
          (query (string-trim (nth 0 (split-string path "|"))))
@@ -74,6 +94,9 @@
 
 
 (defun async-shell-command-to-string (command callback)
+  " Run a shell command in an asynchronous way. Once the call
+terminates, callback is called with the result."
+  
   (let* ((display-buffer-alist (list (cons "\\*Async Shell Command\\*.*"
                                        (cons #'display-buffer-no-window nil))))
          (output-buffer (generate-new-buffer "*Async Shell Command*"))
@@ -90,10 +113,15 @@
       (message "No process running."))))
 
 
-(defun mu4e-dashboard-upate-all-async ()
-  "Update content of all formatted mu4e links in an asynchronous way"
-  (interactive)
-  (mu4e-dashboard-clear-all-links)
+(defun mu4e-dashboard-update-all-async ()
+  "Update content of all formatted mu4e links in an asynchronous way.
+
+A formatted link is a link of the form
+[[mu4e:query|limit|fmt][description]] where fmt is a non nil
+string describing the format. When a link is cleared, the
+description is replaced by a string for the form \"(---)\" and
+have the same size as the current description."
+  (mu4e-dashboard-clear-all)
   (let ((buffer (current-buffer)))
     (org-element-map (org-element-parse-buffer) 'link
       (lambda (link)
@@ -115,9 +143,15 @@
                             (insert (format fmt (string-to-number output)))))))))))))))
 
 (defun mu4e-dashboard-upate-all-sync ()
-  "Update content of all formatted mu4e links in a synchronous way"
-  (interactive)
-  (mu4e-dashboard-clear-all-links)
+  "Update content of all mu4e formatted links in a synchronous way.
+
+A formatted link is a link of the form
+[[mu4e:query|limit|fmt][description]] where fmt is a non nil
+string describing the format. When a link is cleared, the
+description is replaced by a string for the form \"(---)\" and
+have the same size as the current description."
+
+  (mu4e-dashboard-clear-all)
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
       (when (string= (org-element-property :type link) "mu4e")
@@ -127,7 +161,13 @@
 
 
 (defun mu4e-dashboard-clear-link (link)
-  "Remove content of a formatted mu4e links"
+  "Clear a formatted mu4e link.
+
+A formatted link is a link of the form
+[[mu4e:query|limit|fmt][description]] where fmt is a non nil
+string describing the format. When a link is cleared, the
+description is replaced by a string for the form \"(---)\" and
+have the same size as the current description."
   
   (let* ((path (org-element-property :path link))
          (fmt  (nth 1 (split-string path "|")))
@@ -141,12 +181,61 @@
           (insert (format "(%s)" (make-string (- size 2) ?-)))))))
 
 (defun mu4e-dashboard-clear-all ()
-  "Remove content of all formatted mu4e links"
+  "Clear all formatted mu4e links.
+
+A formatted link is a link of the form
+[[mu4e:query|limit|fmt][description]] where fmt is a non nil
+string describing the format. When a link is cleared, the
+description is replaced by a string for the form \"(---)\" and
+have the same size as the current description."
   
-  (interactive)
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
       (when (string= (org-element-property :type link) "mu4e")
         (mu4e-dashboard-clear-link link)))))
-        
 
+
+(defun mu4e-dashboard-activate ()
+  "Activate the dashboard by installing keybindings and starting
+the automatic update"
+  (interactive)
+  (mu4e-dashboard-mode t)
+  (mu4e-dashboard-parse-keymap))
+
+(defun mu4e-dashboard-update ()
+  "Update mu4e index and dashboard"
+  (interactive)
+  (mu4e-update-index)
+  (mu4e-dashboard-update-all-async))
+
+(defun mu4e-dashboard-deactivate ()
+  "Deactivate the dashboard by uninstalling keybindings and
+stopping the automatic update"
+  (interactive)
+  (mu4e-dashboard-mode 0))
+
+
+(defun mu4e-dashboard-parse-keymap ()
+  "Parse an org file for keywords of type KEYMAP:VALUE and
+install the corresponding key bindings in the mu4e-dashboard
+minor mode keymap. Previous keymap (if any) is erased.
+
+VALUE is composed of \"keybinding | function-call\" with keybidning
+begin a string describing a key sequence and a call to an existing
+function. For example, to have 'q' to kill the current buffer, the
+ syntax would be:
+
+#+KEYMAP: q | kill-current-buffer
+
+This can be placed anywhere in the org file even though I advised
+to group keymaps at the same place.
+"
+  (org-element-map (org-element-parse-buffer) 'keyword
+    (lambda (keyword)
+      (when (string= (org-element-property :key keyword) "KEYMAP")
+        (let* ((value (org-element-property :value keyword))
+               (key   (string-trim (nth 0 (split-string value "|"))))
+               (call  (string-trim (nth 1 (split-string value "|")))))
+          (define-key mu4e-dashboard-mode-map (kbd key)
+            (eval (car (read-from-string
+                        (format "(lambda () (interactive) (%s))" call))))))))))
