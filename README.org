@@ -13,7 +13,7 @@ Syntax is quite intuitive:
 [[mu4e:query|format|count][description]]
 #+end_src
 
-=query= must be a valid mu4e query and =count= (optional) is the maxmimum
+=query= must be a valid mu4e query and =count= (optional) is the maximum
 number of results to be returned. When the link is clicked,
 =mu4e-headers-search= is called with the proper query.
 
