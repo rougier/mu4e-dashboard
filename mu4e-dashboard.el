@@ -229,6 +229,9 @@ the automatic update"
   (mu4e-dashboard-mode t)
   (mu4e-dashboard-parse-keymap)
   (mu4e-dashboard-update)
+  (message (concat "["
+                   (propertize "mu4e dashboard" 'face 'bold)
+                   "] Activated"))
   (setq mu4e-dashboard--timer
 ;;        ;;  (run-at-time nil mu4e-update-interval 'mu4e-dashboard-update)))
         (run-with-idle-timer mu4e-update-interval t 'mu4e-dashboard-update)))
@@ -246,8 +249,12 @@ the automatic update"
   "Update mu4e index and dashboard"
   (interactive)
   (with-current-buffer mu4e-dashboard--buffer
-    (message (format-time-string "mu4e dashboard update (%H:%M)"))
-    (mu4e-update-index)
+    (message (concat
+              "["
+              (propertize "mu4e dashboard" 'face 'bold)
+              "] "
+              (format-time-string "Update (%H:%M)")))
+    (mu4e-update-mail-and-index t)
     (mu4e-dashboard-update-all-async)))
 
 (defun mu4e-dashboard-deactivate ()
@@ -258,8 +265,11 @@ stopping the automatic update"
   (if mu4e-dashboard--timer
       (cancel-timer mu4e-dashboard--timer))
   (setq mu4e-dashboard--timer nil)
-  (mu4e-dashboard-mode 0))
-
+  (mu4e-dashboard-mode 0)
+  (message (concat
+            "["
+            (propertize "mu4e dashboard" 'face 'bold)
+            "] Deactivated")))
 
 (defun mu4e-dashboard-parse-keymap ()
   "Parse an org file for keywords of type KEYMAP:VALUE and
@@ -285,5 +295,6 @@ to group keymaps at the same place.
           (define-key mu4e-dashboard-mode-map (kbd key)
             (eval (car (read-from-string
                         (format "(lambda () (interactive) (%s))" call)))))
-          (message (format "mu4e-dashboard: binding %s to %s"
-                           key (format "(lambda () (interactive) (%s))" call))))))))
+;;          (message (format "mu4e-dashboard: binding %s to %s"
+;;                          key (format "(lambda () (interactive) (%s))" call)))
+          )))))
