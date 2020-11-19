@@ -93,11 +93,15 @@ replaced with + signs."
         (let* ((command (format "mu find %s 2> /dev/null | wc -l" query))
                (output (string-to-number (shell-command-to-string command)))
                (output  (format fmt output)))
-          (save-excursion
-            (delete-region beg end)
-            (goto-char beg)
-            (insert (if (<= (length output) size) output
-                      (make-string size ?+))))))))
+          (with-current-buffer mu4e-dashboard--buffer
+            (let ((modified (buffer-modified-p))
+                  (inhibit-read-only t))
+              (save-excursion
+                (delete-region beg end)
+                (goto-char beg)
+                (insert (if (<= (length output) size) output
+                          (make-string size ?+))))
+              (set-buffer-modified-p modified)))))))
 
 
 (defun async-shell-command-to-string (command callback)
@@ -144,10 +148,16 @@ have the same size as the current description."
                   (async-shell-command-to-string command
                       (lambda (output)
                         (with-current-buffer buffer
-                          (save-excursion
-                            (delete-region beg end)
-                            (goto-char beg)
-                            (insert (format fmt (string-to-number output)))))))))))))))
+                          (let ((modified (buffer-modified-p))
+                                (inhibit-read-only t)
+                                (output (format fmt (string-to-number output))))
+                            (save-excursion
+                              (delete-region beg end)
+                              (goto-char beg)
+                              (insert (if (<= (length output) size) output
+                                        (make-string size ?+))))
+                            (set-buffer-modified-p modified)))))))))))))
+                            
 
 (defun mu4e-dashboard-upate-all-sync ()
   "Update content of all mu4e formatted links in a synchronous way.
@@ -181,11 +191,15 @@ have the same size as the current description."
          (beg  (org-element-property :contents-begin link))
          (end  (org-element-property :contents-end link))
          (size (- end beg)))
-    (if (> (length fmt) 0)
-        (save-excursion
-          (delete-region beg end)
-          (goto-char beg)
-          (insert (format "(%s)" (make-string (- size 2) ?-)))))))
+    (if (and fmt (> (length fmt) 0))
+        (with-current-buffer mu4e-dashboard--buffer
+          (let ((modified (buffer-modified-p))
+                (inhibit-read-only t))
+            (save-excursion
+              (delete-region beg end)
+              (goto-char beg)
+              (insert (format "(%s)" (make-string (- size 2) ?-))))
+            (set-buffer-modified-p modified))))))
 
 (defun mu4e-dashboard-clear-all ()
   "Clear all formatted mu4e links.
@@ -199,7 +213,8 @@ have the same size as the current description."
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
       (when (string= (org-element-property :type link) "mu4e")
-        (mu4e-dashboard-clear-link link)))))
+        (mu4e-dashboard-clear-link link))))
+  (redisplay t))
 
 
 (defun mu4e-dashboard-activate ()
@@ -207,24 +222,31 @@ have the same size as the current description."
 the automatic update"
   (interactive)
   (setq mu4e-dashboard--buffer (current-buffer))
+  (setq buffer-read-only t)
+  (if mu4e-dashboard--timer
+      (cancel-timer mu4e-dashboard--timer))
+  (setq mu4e-dashboard--timer nil)
   (mu4e-dashboard-mode t)
   (mu4e-dashboard-parse-keymap)
   (mu4e-dashboard-update)
   (setq mu4e-dashboard--timer
+;;        ;;  (run-at-time nil mu4e-update-interval 'mu4e-dashboard-update)))
         (run-with-idle-timer mu4e-update-interval t 'mu4e-dashboard-update)))
 
 (defun mu4e-dashboard-quit ()
   "Quit the dashboard"
   (interactive)
   (with-current-buffer mu4e-dashboard--buffer
-    (cancel-timer mu4e-dashboard--timer)
+    (if mu4e-dashboard--timer
+        (cancel-timer mu4e-dashboard--timer))
+    (setq mu4e-dashboard--timer nil)
     (kill-current-buffer)))
 
 (defun mu4e-dashboard-update ()
   "Update mu4e index and dashboard"
   (interactive)
   (with-current-buffer mu4e-dashboard--buffer
-    (message "mu4e dashboard update")
+    (message (format-time-string "mu4e dashboard update (%H:%M)"))
     (mu4e-update-index)
     (mu4e-dashboard-update-all-async)))
 
@@ -232,7 +254,10 @@ the automatic update"
   "Deactivate the dashboard by uninstalling keybindings and
 stopping the automatic update"
   (interactive)
-  (cancel-timer mu4e-dashboard--timer)
+  (setq buffer-read-only nil)
+  (if mu4e-dashboard--timer
+      (cancel-timer mu4e-dashboard--timer))
+  (setq mu4e-dashboard--timer nil)
   (mu4e-dashboard-mode 0))
 
 
