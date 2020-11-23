@@ -55,6 +55,20 @@ For example, if you want to bind =;= to context switch, you would write:
 #+KEYMAP: ; | mu4e-context-switch
 #+end_src
 
+*** Query test
+
+In the provided [[dashboard.org]], there's a definition for a mu query that can be
+called directly inside the org file using [[https://orgmode.org/worg/org-contrib/babel/][org-babel]]. This can be convenient if
+you want to test a query before creating a link. Usage is quite simple:
+
+#+begin_src org
+#+CALL: query(flag:unread, 10)
+#+RESULTS:
+#+end_src
+
+Just type *C-c C-c* on the call line and you should see query results under the
+RESULTS line.
+
 
 ** Usage
 
