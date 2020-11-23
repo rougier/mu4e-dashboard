@@ -7,6 +7,9 @@ dashboard, by simply writing an org file as shown below:
 
 [[./dashboard.png]]
 
+
+[[./dashboard-2.png]]
+
 ** Installation
 
 Evaluate the buffer and you're good to go. It is your responsibility to
