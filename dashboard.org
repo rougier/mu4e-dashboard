@@ -73,4 +73,3 @@ mu find --sortfield=date --reverse --fields "f s" $query  | head -$count
 #+KEYMAP: ; | mu4e-context-switch
 #+KEYMAP: q | mu4e-dashboard-quit
  
-(require 'ob-shell)
