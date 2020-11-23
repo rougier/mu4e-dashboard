@@ -27,7 +27,7 @@
 
 
 ;; Timer handler
-(defvar mu4e-dashboard--timer nil)
+;; (defvar mu4e-dashboard--timer nil)
 
 ;; Dashboard buffer
 (defvar mu4e-dashboard--buffer nil)
@@ -132,7 +132,8 @@ A formatted link is a link of the form
 string describing the format. When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
-  (mu4e-dashboard-clear-all)
+  
+  ;; (mu4e-dashboard-clear-all)
   (let ((buffer (current-buffer)))
     (org-element-map (org-element-parse-buffer) 'link
       (lambda (link)
@@ -223,26 +224,29 @@ the automatic update"
   (interactive)
   (setq mu4e-dashboard--buffer (current-buffer))
   (setq buffer-read-only t)
-  (if mu4e-dashboard--timer
-      (cancel-timer mu4e-dashboard--timer))
+;;  (if mu4e-dashboard--timer
+;;      (cancel-timer mu4e-dashboard--timer))
   (setq mu4e-dashboard--timer nil)
   (mu4e-dashboard-mode t)
   (mu4e-dashboard-parse-keymap)
+  (add-hook 'mu4e-index-updated-hook
+            'mu4e-dashboard-update)
   (mu4e-dashboard-update)
   (message (concat "["
                    (propertize "mu4e dashboard" 'face 'bold)
                    "] Activated"))
-  (setq mu4e-dashboard--timer
+;;  (setq mu4e-dashboard--timer
 ;;        ;;  (run-at-time nil mu4e-update-interval 'mu4e-dashboard-update)))
-        (run-with-idle-timer mu4e-update-interval t 'mu4e-dashboard-update)))
+;;        (run-with-idle-timer mu4e-update-interval t 'mu4e-dashboard-update))
+  )
 
 (defun mu4e-dashboard-quit ()
   "Quit the dashboard"
   (interactive)
   (with-current-buffer mu4e-dashboard--buffer
-    (if mu4e-dashboard--timer
-        (cancel-timer mu4e-dashboard--timer))
-    (setq mu4e-dashboard--timer nil)
+;;    (if mu4e-dashboard--timer
+;;        (cancel-timer mu4e-dashboard--timer))
+;;    (setq mu4e-dashboard--timer nil)
     (kill-current-buffer)))
 
 (defun mu4e-dashboard-update ()
@@ -254,7 +258,12 @@ the automatic update"
               (propertize "mu4e dashboard" 'face 'bold)
               "] "
               (format-time-string "Update (%H:%M)")))
-    (mu4e-update-mail-and-index t)
+    ;; (mu4e-update-mail-and-index t)
+;;    (with-current-buffer mu4e-dashboard--buffer
+;;      (let ((modified (buffer-modified-p))
+;;            (inhibit-read-only t))
+;;        (save-excursion (org-babel-execute-buffer))
+;;        (set-buffer-modified-p modified)))
     (mu4e-dashboard-update-all-async)))
 
 (defun mu4e-dashboard-deactivate ()
@@ -262,10 +271,12 @@ the automatic update"
 stopping the automatic update"
   (interactive)
   (setq buffer-read-only nil)
-  (if mu4e-dashboard--timer
-      (cancel-timer mu4e-dashboard--timer))
-  (setq mu4e-dashboard--timer nil)
+;;  (if mu4e-dashboard--timer
+;;      (cancel-timer mu4e-dashboard--timer))
+;;  (setq mu4e-dashboard--timer nil)
   (mu4e-dashboard-mode 0)
+  (remove-hook 'mu4e-index-updated-hook
+            'mu4e-dashboard-update)
   (message (concat
             "["
             (propertize "mu4e dashboard" 'face 'bold)
@@ -284,8 +295,10 @@ function. For example, to have 'q' to kill the current buffer, the
 #+KEYMAP: q | kill-current-buffer
 
 This can be placed anywhere in the org file even though I advised
-to group keymaps at the same place.
-"
+to group keymaps at the same place."
+
+  (define-key mu4e-dashboard-mode-map (kbd "return") 'org-open-at-point)
+  
   (org-element-map (org-element-parse-buffer) 'keyword
     (lambda (keyword)
       (when (string= (org-element-property :key keyword) "KEYMAP")
