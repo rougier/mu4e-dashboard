@@ -7,7 +7,16 @@ dashboard, by simply writing an org file as shown below:
 
 [[./dashboard.png]]
 
-Syntax is quite intuitive:
+** Installation
+
+Evaluate the buffer and you're good to go. It is your responsibility to
+write an org file with links pointing to varius queries on your mailboxes.
+
+** Configuration
+
+*** Links
+
+The link syntax is quite intuitive:
 
 #+begin_src org
 [[mu4e:query|format|count][description]]
@@ -26,8 +35,33 @@ number of results to be returned. When the link is clicked,
 order to update the descritption using the given format:
 
 #+begin_src org
-[[mu4e:flag:unread|(%3d)][(---)]]
+[[mu4e:flag:unread|%3d][---]]
 #+end_src
 
 With the example above, when the link is cliked, the =---= part will be
 replaced by the number of unread mails.
+
+*** Key bindings
+
+Keybindings can be configured using the =KEYMAP= keyword in your org file:
+
+#+begin_src org
+#+KEYMAP: key | elisp function
+#+end_src
+
+For example, if you want to bind =;= to context switch, you would write:
+
+#+begin_src org
+#+KEYMAP: ; | mu4e-context-switch
+#+end_src
+
+
+** Usage
+
+   To activate the dashboard, type =mu4e-dashboard-acivate=. This will install
+   a =mu4e-dashboard-mode= minor mode with dedicated keybindngs.
+   
+   To edit the org file, you'll need to deactivate if first using
+   =mu4e-dashboard-deacivate=.
+
+
