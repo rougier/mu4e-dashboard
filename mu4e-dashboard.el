@@ -291,6 +291,15 @@ stopping the automatic update"
             (propertize "mu4e dashboard" 'face 'bold)
             "] Deactivated")))
 
+(defun mu4e-dashboard-toggle ()
+  "Toggle mu4e-dashboard mode on and off."
+  (interactive)
+  (when (and (eq major-mode 'org-mode)
+             (boundp mu4e-dashboard-mode))
+    (if mu4e-dashboard-mode
+        (mu4e-dashboard-deactivate)
+      (mu4e-dashboard-activate))))
+
 (defun mu4e-dashboard-parse-keymap ()
   "Parse an org file for keywords of type KEYMAP:VALUE and
 install the corresponding key bindings in the mu4e-dashboard
