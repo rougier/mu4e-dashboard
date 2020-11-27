@@ -53,9 +53,9 @@ Call [[elisp:mu4e-dashboard-deactivate][mu4e-dashboard-deactivate]] before editi
 #+STARTUP: showall showstars indent
 
 #+NAME: query
-#+BEGIN_SRC shell :results list raw :var query="flag:unread count=5 
+#+BEGIN_SRC sh :results list raw :var query="flag:unread" count=5 
 export LANG="en_US.UTF-8"; export LC_ALL="en_US.UTF-8";
-mu find --sortfield=date --reverse --fields "f s" $query  | head -$count
+mu find -n $count --sortfield=date --reverse --fields "f s" $query
 #+END_SRC
 
 #+KEYMAP: u | mu4e-headers-search "flag:unread"
