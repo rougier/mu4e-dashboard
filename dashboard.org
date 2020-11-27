@@ -9,7 +9,7 @@
 * Queries
 
 Type *C-c C-c* on the /CALL/ line below to evaluate your query.
-*NOTE*: dahsboard needs to be deactivated first
+*NOTE*: dashboard needs to be deactivated first
 
 #+CALL: query("flag:unread", 5)
 #+RESULTS:
