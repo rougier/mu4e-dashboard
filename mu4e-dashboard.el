@@ -56,7 +56,7 @@
 
 If FMT is not specified or is nil, clicking on the link calls
 mu4e with the specified QUERY (with or without the given
-LIMIT). If FMT is specified, the descritpion of the link is
+LIMIT). If FMT is specified, the description of the link is
 updated with the QUERY count formatted using the provided
 format (for example \"%4d\")."
   
