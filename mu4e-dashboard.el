@@ -23,6 +23,14 @@
 
 ;; For a full copy of the GNU General Public License
 ;; see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; mu4e-dashboard provides enhanced org-mode links that allow you to
+;; define custom dashboards that link back to the mu4e email client.
+;;
+
+
 (require 'subr-x)
 (require 'ob-shell)
 
@@ -312,3 +320,6 @@ to group keymaps at the same place."
 ;;          (message (format "mu4e-dashboard: binding %s to %s"
 ;;                          key (format "(lambda () (interactive) (%s))" call)))
           )))))
+
+(provide 'mu4e-dashboard)
+;;; mu4e-dashboard.el ends here
