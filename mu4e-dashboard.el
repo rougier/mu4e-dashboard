@@ -45,6 +45,7 @@
 (org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
 
 ;; Minor mode to simulate buffer local keybindings.
+;;;###autoload
 (define-minor-mode mu4e-dashboard-mode
   "Minor mode to simulate buffer local keybindings."
   :keymap (make-sparse-keymap)
@@ -227,6 +228,7 @@ have the same size as the current description."
   (redisplay t))
 
 
+;;;###autoload
 (defun mu4e-dashboard-activate ()
   "Activate the dashboard by installing keybindings and starting
 the automatic update"
@@ -291,6 +293,7 @@ stopping the automatic update"
             (propertize "mu4e dashboard" 'face 'bold)
             "] Deactivated")))
 
+;;;###autoload
 (defun mu4e-dashboard-toggle ()
   "Toggle mu4e-dashboard mode on and off."
   (interactive)
