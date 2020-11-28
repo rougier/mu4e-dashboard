@@ -1,7 +1,7 @@
 
-*mu4e Dahsboard*
+*mu4e Dashboard*
 
-mu4e dahsboard provides a new =mu4e= org link type that allows to execute
+mu4e dashboard provides a new =mu4e= org link type that allows to execute
 various mu4e queries when clicked. Such links can be organised into a
 dashboard, by simply writing an org file as shown below:
 
