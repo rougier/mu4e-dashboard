@@ -53,7 +53,7 @@
 
 
 (defun mu4e-dashboard-follow-mu4e-link (path)
-  "Process a mu4e link of the form [[mu4e:query|limit|fmt][(---------)]].
+  "Process a mu4e link of the form [[mu4e:query|fmt|limit][(---------)]].
 
 If FMT is not specified or is nil, clicking on the link calls
 mu4e with the specified QUERY (with or without the given
@@ -64,7 +64,7 @@ format (for example \"%4d\")."
   (let* ((link    (org-element-context))
          (query   (string-trim (nth 0 (split-string path "|"))))
          (fmt     (nth 1 (split-string path "|")))
-         (count   (nth 2 (split-string path "|"))))
+         (count   (string-to-number (nth 2 (split-string path "|")))))
     (cond
      ;; Regular query without limit
      ((and (not fmt) (not count))
@@ -72,7 +72,7 @@ format (for example \"%4d\")."
 
      ;; Regular query with limit
      ((and count (> count 0))
-      (let ((mu4e-headers-results-limit (string-to-number count)))
+      (let ((mu4e-headers-results-limit count))
         (mu4e-headers-search query)))
 
      ;; Query count and link description update
