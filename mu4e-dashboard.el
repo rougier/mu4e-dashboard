@@ -23,6 +23,14 @@
 
 ;; For a full copy of the GNU General Public License
 ;; see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; mu4e-dashboard provides enhanced org-mode links that allow you to
+;; define custom dashboards that link back to the mu4e email client.
+;;
+
+
 (require 'subr-x)
 (require 'ob-shell)
 
@@ -37,6 +45,7 @@
 (org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
 
 ;; Minor mode to simulate buffer local keybindings.
+;;;###autoload
 (define-minor-mode mu4e-dashboard-mode
   "Minor mode to simulate buffer local keybindings."
   :keymap (make-sparse-keymap)
@@ -48,7 +57,7 @@
 
 If FMT is not specified or is nil, clicking on the link calls
 mu4e with the specified QUERY (with or without the given
-LIMIT). If FMT is specified, the descritpion of the link is
+LIMIT). If FMT is specified, the description of the link is
 updated with the QUERY count formatted using the provided
 format (for example \"%4d\")."
   
@@ -219,6 +228,7 @@ have the same size as the current description."
   (redisplay t))
 
 
+;;;###autoload
 (defun mu4e-dashboard-activate ()
   "Activate the dashboard by installing keybindings and starting
 the automatic update"
@@ -283,6 +293,16 @@ stopping the automatic update"
             (propertize "mu4e dashboard" 'face 'bold)
             "] Deactivated")))
 
+;;;###autoload
+(defun mu4e-dashboard-toggle ()
+  "Toggle mu4e-dashboard mode on and off."
+  (interactive)
+  (when (and (eq major-mode 'org-mode)
+             (boundp mu4e-dashboard-mode))
+    (if mu4e-dashboard-mode
+        (mu4e-dashboard-deactivate)
+      (mu4e-dashboard-activate))))
+
 (defun mu4e-dashboard-parse-keymap ()
   "Parse an org file for keywords of type KEYMAP:VALUE and
 install the corresponding key bindings in the mu4e-dashboard
@@ -312,3 +332,6 @@ to group keymaps at the same place."
 ;;          (message (format "mu4e-dashboard: binding %s to %s"
 ;;                          key (format "(lambda () (interactive) (%s))" call)))
           )))))
+
+(provide 'mu4e-dashboard)
+;;; mu4e-dashboard.el ends here
