@@ -42,7 +42,7 @@
 (defvar mu4e-dashboard--buffer nil)
 
 ;; Install the mu4e link type
-(org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
+(org-link-set-parameters "mu" :follow #'mu4e-dashboard-follow-mu-link)
 
 ;; Minor mode to simulate buffer local keybindings.
 ;;;###autoload
@@ -52,8 +52,8 @@
   :init-value nil)
 
 
-(defun mu4e-dashboard-follow-mu4e-link (path)
-  "Process a mu4e link of the form [[mu4e:query|fmt|limit][(---------)]].
+(defun mu4e-dashboard-follow-mu-link (path)
+  "Process a mu4e link of the form [[mu:query|fmt|limit][(---------)]].
 
 If FMT is not specified or is nil, clicking on the link calls
 mu4e with the specified QUERY (with or without the given
@@ -84,7 +84,7 @@ format (for example \"%4d\")."
   "Update content of a formatted mu4e LINK.
 
 A formatted link is a link of the form
-[[mu4e:query|limit|fmt][(---------)]] where fmt is a non nil
+[[mu:query|limit|fmt][(---------)]] where fmt is a non nil
 string describing the format. When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description. If the given
@@ -138,7 +138,7 @@ terminates, callback is called with the result."
   "Update content of all formatted mu4e links in an asynchronous way.
 
 A formatted link is a link of the form
-[[mu4e:query|limit|fmt][(---------)]] where fmt is a non nil
+[[mu:query|limit|fmt][(---------)]] where fmt is a non nil
 string describing the format. When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
@@ -147,7 +147,7 @@ have the same size as the current description."
   (let ((buffer (current-buffer)))
     (org-element-map (org-element-parse-buffer) 'link
       (lambda (link)
-        (when (string= (org-element-property :type link) "mu4e")
+        (when (string= (org-element-property :type link) "mu")
           (let* ((path  (org-element-property :path link))
                  (query (string-trim (nth 0 (split-string path "|"))))
                  (fmt   (nth 1 (split-string path "|")))
@@ -174,7 +174,7 @@ have the same size as the current description."
   "Update content of all mu4e formatted links in a synchronous way.
 
 A formatted link is a link of the form
-[[mu4e:query|limit|fmt][(---------)]] where fmt is a non nil
+[[mu:query|limit|fmt][(---------)]] where fmt is a non nil
 string describing the format. When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
@@ -182,7 +182,7 @@ have the same size as the current description."
   (mu4e-dashboard-clear-all)
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
-      (when (string= (org-element-property :type link) "mu4e")
+      (when (string= (org-element-property :type link) "mu")
         (mu4e-dashboard-update-link link)
         (redisplay t)))))
 
@@ -192,7 +192,7 @@ have the same size as the current description."
   "Clear a formatted mu4e link.
 
 A formatted link is a link of the form
-[[mu4e:query|limit|fmt][(---------)]] where fmt is a non nil
+[[mu:query|limit|fmt][(---------)]] where fmt is a non nil
 string describing the format. When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
@@ -216,14 +216,14 @@ have the same size as the current description."
   "Clear all formatted mu4e links.
 
 A formatted link is a link of the form
-[[mu4e:query|limit|fmt][(---------)]] where fmt is a non nil
+[[mu:query|limit|fmt][(---------)]] where fmt is a non nil
 string describing the format. When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
   
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
-      (when (string= (org-element-property :type link) "mu4e")
+      (when (string= (org-element-property :type link) "mu")
         (mu4e-dashboard-clear-link link))))
   (redisplay t))
 
