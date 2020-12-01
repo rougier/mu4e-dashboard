@@ -78,10 +78,10 @@ RESULTS line.
 
 ** Usage
 
-   To activate the dashboard, type =mu4e-dashboard-acivate=. This will install
+   To activate the dashboard, type =mu4e-dashboard-activate=. This will install
    a =mu4e-dashboard-mode= minor mode with dedicated keybindngs.
    
    To edit the org file, you'll need to deactivate if first using
-   =mu4e-dashboard-deacivate=.
+   =mu4e-dashboard-deactivate=.
 
 
