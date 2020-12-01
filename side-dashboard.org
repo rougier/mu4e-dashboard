@@ -1,0 +1,76 @@
+
+* Mailboxes                 *[[mu4e:flag:unread|%2d][ 4]]*
+
+/[i]/ [[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox][Inbox]] /.............../ /[[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox|%2d][ 4]]/
+/[f]/ [[mu4e:flag:flagged][Important]] /........../ /[[mu4e:flag:flagged|%3d][281]]/
+/[d]/ [[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts][Drafts]] /.............../ /[[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts|%1d][1]]/
+/[s]/ [[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent][Sent]] /............../ /[[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent|%4d][7186]]/
+/[a]/ [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive][Archive]] /........../ /[[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive|%5d][44978]]/
+
+* Smart mailboxes
+
+/[t]/ [[mu4e:date:today..now][Today]] /............../ /[[mu4e:date:today..now|%3d][ 19]]/
+/[y]/ [[mu4e:date:2d..today and not date:today..now][Yesterday]] /........../ /[[mu4e:date:2d..today and not date:today..now|%3d][380]]/
+/[w]/ [[mu4e:date:1w..now][Last week]] /......... /[[mu4e:date:7d..now|%4d][1196]]/
+/[m]/ [[mu4e:date:4w..now][Last month]] /......../ /[[mu4e:date:4w..|%4d][3924]]/
+
+[[mu4e:flag:attach][Attachments]] /........../ /[[mu4e:flag:attach|%5d][10040]]/
+[[mu4e:flag:encrypted][Encrypted]] /............./ /[[mu4e:flag:encrypted|%4d][ 888]]/
+
+** Tags
+
+[[mu4e:tag:LINK][LINK]] /-/ [[mu4e:tag:PAPER][PAPER]] /-/ [[mu4e:tag:TODO][TODO]] /-/ [[mu4e:tag:CODE][CODE]]
+[[mu4e:tag:CV][CV]] /-/ [[mu4e:tag:ASPP][ASPP]] /-/ [[mu4e:tag:EDMI][EDMI]]
+ 
+** People
+
+[[mu4e:from:rms@gnu.org][Richard Stallman]]       /[[mu4e:from:rms@gnu.org|%3d][---]]/ 
+[[mu4e:from:djcb@djcbsoftware.nl][Dirk-Jan C. Binnema]] /[[mu4e:from:djcb@djcbsoftware.nl|%2d][    --]]/ 
+
+** Mailing lists
+
+[[mu4e:list:emacs-devel.gnu.org][Emacs development]] /.../ /[[mu4e:list:emacs-devel.gnu.org|%4d][3538]]/
+[[mu4e:list:mu-discuss.googlegroups.com][Mu4e discussions]] /...../ /[[mu4e:list:mu-discuss.googlegroups.com|%3d][277]]/
+[[mu4e:list:numpy-discussion.python.org][Numpy discussion]] /..../ /[[mu4e:list:numpy-discussion.python.org|%4d][1065]]/
+
+** Date
+
+[[mu4e:flag:attach][Year 2020]] /........../ /[[mu4e:date:20200101..20201231|%5d][29260]]/
+[[mu4e:date:20190101..20191231][Year 2019]] /........../ /[[mu4e:date:20190101..20191231|%5d][19845]]/
+[[mu4e:date:20180101..20181231][Year 2018]] /.........../ /[[mu4e:date:20180101..20181231|%4d][3038]]/
+
+* /Configuration/
+:PROPERTIES:
+:VISIBILITY: hideall
+:END:
+
+Call [[elisp:mu4e-dashboard-activate][mu4e-dashboard-activate]] to activate automatic update and key bindings.
+Call [[elisp:mu4e-dashboard-deactivate][mu4e-dashboard-deactivate]] before editing the dashboard
+
+#+STARTUP: showall showstars indent
+
+#+NAME: query
+#+BEGIN_SRC shell :results list raw :var query="flag:unread count=5 
+export LANG="en_US.UTF-8"; export LC_ALL="en_US.UTF-8";
+mu find --sortfield=date --reverse --fields "f s" $query  | head -$count
+#+END_SRC
+
+#+KEYMAP: u | mu4e-headers-search "flag:unread"
+#+KEYMAP: i | mu4e-headers-search "m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox"
+#+KEYMAP: d | mu4e-headers-search "m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts"
+#+KEYMAP: s | mu4e-headers-search "m:/inria/sent or m:/gmail/sent or m:/univ/sent"
+#+KEYMAP: f | mu4e-headers-search "flag:flagged"
+
+#+KEYMAP: t | mu4e-headers-search "date:today..now"
+#+KEYMAP: y | mu4e-headers-search "date:2d..today and not date:today..now"
+#+KEYMAP: w | mu4e-headers-search "date:7d..now"
+#+KEYMAP: m | mu4e-headers-search "date:4w..now"
+
+#+KEYMAP: C | mu4e-compose-new
+#+KEYMAP: U | mu4e-dashboard-update
+#+KEYMAP: ; | mu4e-context-switch
+#+KEYMAP: q | mu4e-dashboard-quit
+#+KEYMAP: W | mu4e-headers-toggle-include-related 
+#+KEYMAP: O | mu4e-headers-change-sorting
+#+KEYMAP: x | mu4e-mark-execute-all t
+#+KEYMAP: <return> | org-open-at-point
