@@ -1,43 +1,43 @@
 
-* Mailboxes                 *[[mu4e:flag:unread|%2d][ 4]]*
+* Mailboxes                 *[[mu:flag:unread|%2d][ 4]]*
 
-/[i]/ [[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox][Inbox]] /.............../ /[[mu4e:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox|%2d][ 4]]/
-/[f]/ [[mu4e:flag:flagged][Important]] /........../ /[[mu4e:flag:flagged|%3d][281]]/
-/[d]/ [[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts][Drafts]] /.............../ /[[mu4e:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts|%1d][1]]/
-/[s]/ [[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent][Sent]] /............../ /[[mu4e:m:/inria/sent or m:/gmail/sent or m:/univ/sent|%4d][7186]]/
-/[a]/ [[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive][Archive]] /........../ /[[mu4e:m:/inria/archive or m:/gmail/archive or m:/univ/archive|%5d][44978]]/
+/[i]/ [[mu:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox][Inbox]] /.............../ /[[mu:m:/inria/inbox or m:/gmail/inbox or m:/univ/inbox|%2d][ 4]]/
+/[f]/ [[mu:flag:flagged][Important]] /........../ /[[mu:flag:flagged|%3d][281]]/
+/[d]/ [[mu:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts][Drafts]] /.............../ /[[mu:m:/inria/drafts or m:/gmail/drafts or m:/univ/drafts|%1d][1]]/
+/[s]/ [[mu:m:/inria/sent or m:/gmail/sent or m:/univ/sent][Sent]] /............../ /[[mu:m:/inria/sent or m:/gmail/sent or m:/univ/sent|%4d][7186]]/
+/[a]/ [[mu:m:/inria/archive or m:/gmail/archive or m:/univ/archive][Archive]] /........../ /[[mu:m:/inria/archive or m:/gmail/archive or m:/univ/archive|%5d][44978]]/
 
 * Smart mailboxes
 
-/[t]/ [[mu4e:date:today..now][Today]] /............../ /[[mu4e:date:today..now|%3d][ 19]]/
-/[y]/ [[mu4e:date:2d..today and not date:today..now][Yesterday]] /........../ /[[mu4e:date:2d..today and not date:today..now|%3d][380]]/
-/[w]/ [[mu4e:date:1w..now][Last week]] /......... /[[mu4e:date:7d..now|%4d][1196]]/
-/[m]/ [[mu4e:date:4w..now][Last month]] /......../ /[[mu4e:date:4w..|%4d][3924]]/
+/[t]/ [[mu:date:today..now][Today]] /............../ /[[mu:date:today..now|%3d][ 19]]/
+/[y]/ [[mu:date:2d..today and not date:today..now][Yesterday]] /........../ /[[mu:date:2d..today and not date:today..now|%3d][380]]/
+/[w]/ [[mu:date:1w..now][Last week]] /......... /[[mu:date:7d..now|%4d][1196]]/
+/[m]/ [[mu:date:4w..now][Last month]] /......../ /[[mu:date:4w..|%4d][3924]]/
 
-[[mu4e:flag:attach][Attachments]] /........../ /[[mu4e:flag:attach|%5d][10040]]/
-[[mu4e:flag:encrypted][Encrypted]] /............./ /[[mu4e:flag:encrypted|%4d][ 888]]/
+[[mu:flag:attach][Attachments]] /........../ /[[mu:flag:attach|%5d][10040]]/
+[[mu:flag:encrypted][Encrypted]] /............./ /[[mu:flag:encrypted|%4d][ 888]]/
 
 ** Tags
 
-[[mu4e:tag:LINK][LINK]] /-/ [[mu4e:tag:PAPER][PAPER]] /-/ [[mu4e:tag:TODO][TODO]] /-/ [[mu4e:tag:CODE][CODE]]
-[[mu4e:tag:CV][CV]] /-/ [[mu4e:tag:ASPP][ASPP]] /-/ [[mu4e:tag:EDMI][EDMI]]
+[[mu:tag:LINK][LINK]] /-/ [[mu:tag:PAPER][PAPER]] /-/ [[mu:tag:TODO][TODO]] /-/ [[mu:tag:CODE][CODE]]
+[[mu:tag:CV][CV]] /-/ [[mu:tag:ASPP][ASPP]] /-/ [[mu:tag:EDMI][EDMI]]
  
 ** People
 
-[[mu4e:from:rms@gnu.org][Richard Stallman]]       /[[mu4e:from:rms@gnu.org|%3d][---]]/ 
-[[mu4e:from:djcb@djcbsoftware.nl][Dirk-Jan C. Binnema]] /[[mu4e:from:djcb@djcbsoftware.nl|%2d][    --]]/ 
+[[mu:from:rms@gnu.org][Richard Stallman]]       /[[mu:from:rms@gnu.org|%3d][---]]/ 
+[[mu:from:djcb@djcbsoftware.nl][Dirk-Jan C. Binnema]] /[[mu:from:djcb@djcbsoftware.nl|%2d][    --]]/ 
 
 ** Mailing lists
 
-[[mu4e:list:emacs-devel.gnu.org][Emacs development]] /.../ /[[mu4e:list:emacs-devel.gnu.org|%4d][3538]]/
-[[mu4e:list:mu-discuss.googlegroups.com][Mu4e discussions]] /...../ /[[mu4e:list:mu-discuss.googlegroups.com|%3d][277]]/
-[[mu4e:list:numpy-discussion.python.org][Numpy discussion]] /..../ /[[mu4e:list:numpy-discussion.python.org|%4d][1065]]/
+[[mu:list:emacs-devel.gnu.org][Emacs development]] /.../ /[[mu:list:emacs-devel.gnu.org|%4d][3538]]/
+[[mu:list:mu-discuss.googlegroups.com][Mu4e discussions]] /...../ /[[mu:list:mu-discuss.googlegroups.com|%3d][277]]/
+[[mu:list:numpy-discussion.python.org][Numpy discussion]] /..../ /[[mu:list:numpy-discussion.python.org|%4d][1065]]/
 
 ** Date
 
-[[mu4e:flag:attach][Year 2020]] /........../ /[[mu4e:date:20200101..20201231|%5d][29260]]/
-[[mu4e:date:20190101..20191231][Year 2019]] /........../ /[[mu4e:date:20190101..20191231|%5d][19845]]/
-[[mu4e:date:20180101..20181231][Year 2018]] /.........../ /[[mu4e:date:20180101..20181231|%4d][3038]]/
+[[mu:flag:attach][Year 2020]] /........../ /[[mu:date:20200101..20201231|%5d][29260]]/
+[[mu:date:20190101..20191231][Year 2019]] /........../ /[[mu:date:20190101..20191231|%5d][19845]]/
+[[mu:date:20180101..20181231][Year 2018]] /.........../ /[[mu:date:20180101..20181231|%4d][3038]]/
 
 * /Configuration/
 :PROPERTIES:

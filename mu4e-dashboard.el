@@ -42,7 +42,17 @@
 (defvar mu4e-dashboard--buffer nil)
 
 ;; Install the mu4e link type
-(org-add-link-type "mu4e" 'mu4e-dashboard-follow-mu4e-link)
+(defgroup mu4e-dashboard nil
+  "Provides a new Org mode link type for mu4e queries."
+  :group 'comm)
+
+(defcustom mu4e-dashboard-link-name "mu"
+  "Default link name."
+  :type 'string)
+
+(org-link-set-parameters
+ mu4e-dashboard-link-name
+ :follow #'mu4e-dashboard-follow-mu4e-link)
 
 ;; Minor mode to simulate buffer local keybindings.
 ;;;###autoload
@@ -147,7 +157,7 @@ have the same size as the current description."
   (let ((buffer (current-buffer)))
     (org-element-map (org-element-parse-buffer) 'link
       (lambda (link)
-        (when (string= (org-element-property :type link) "mu4e")
+        (when (string= (org-element-property :type link) mu4e-dashboard-link-name)
           (let* ((path  (org-element-property :path link))
                  (query (string-trim (nth 0 (split-string path "|"))))
                  (fmt   (nth 1 (split-string path "|")))
@@ -182,7 +192,7 @@ have the same size as the current description."
   (mu4e-dashboard-clear-all)
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
-      (when (string= (org-element-property :type link) "mu4e")
+      (when (string= (org-element-property :type link) mu4e-dashboard-link-name)
         (mu4e-dashboard-update-link link)
         (redisplay t)))))
 
@@ -223,7 +233,7 @@ have the same size as the current description."
   
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
-      (when (string= (org-element-property :type link) "mu4e")
+      (when (string= (org-element-property :type link) mu4e-dashboard-link-name)
         (mu4e-dashboard-clear-link link))))
   (redisplay t))
 
