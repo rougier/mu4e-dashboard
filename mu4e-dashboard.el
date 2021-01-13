@@ -139,11 +139,10 @@ terminates, callback is called with the result."
 
 A formatted link is a link of the form
 [[mu4e:query|limit|fmt][(---------)]] where fmt is a non nil
-string describing the format. When a link is cleared, the
+string describing the format.  When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
   
-  ;; (mu4e-dashboard-clear-all)
   (let ((buffer (current-buffer)))
     (org-element-map (org-element-parse-buffer) 'link
       (lambda (link)
@@ -153,8 +152,13 @@ have the same size as the current description."
                  (fmt   (nth 1 (split-string path "|")))
                  (beg   (org-element-property :contents-begin link))
                  (end   (org-element-property :contents-end link))
-                 (size  (- end beg)))
-            (if (and fmt (> (length fmt) 0))
+                 (size  (if (and beg end) (- end beg) 0)))
+            (when (and fmt (> (length fmt) 0))
+                ;; The rest of this function will execute successfully with a
+                ;; `size' of zero, but since there would be no reason to
+                ;; proceed with no output, we signal an error.
+                (if (eq size 0)
+                    (error "The link ``%s'' has a format clause, but no output width" path))
                 (let ((command (format "mu find %s 2> /dev/null | wc -l" query)))
                   (async-shell-command-to-string command
                       (lambda (output)
