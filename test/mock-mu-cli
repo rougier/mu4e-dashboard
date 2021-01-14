@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+declare -A rsp
+rsp=(["flag:unread"]=17 ["date:today..now"]=113)
+
+count=${rsp[$2]:-0}
+echo -n `date` >> mock.log
+echo ": $2 => $count" >> mock.log
+i=0
+while test $i -lt $count; do
+    echo "mock response $i";
+    i=$(($i+1));
+done

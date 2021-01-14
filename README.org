@@ -75,7 +75,6 @@ you want to test a query before creating a link. Usage is quite simple:
 Just type *C-c C-c* on the call line and you should see query results under the
 RESULTS line.
 
-
 ** Usage
 
 To activate the dashboard, type =mu4e-dashboard-mode=. This will turn on
