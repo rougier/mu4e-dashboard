@@ -50,6 +50,10 @@
   "Default link name."
   :type 'string)
 
+(defcustom mu4e-dashboard-file nil
+  "Org file containing the dashboard template."
+  :type 'string)
+
 (org-link-set-parameters
  mu4e-dashboard-link-name
  :follow #'mu4e-dashboard-follow-mu4e-link)
@@ -347,5 +351,231 @@ to group keymaps at the same place."
 ;;                          key (format "(lambda () (interactive) (%s))" call)))
           )))))
 
+
+(defconst mu4e-dashboard-buffer-name " *mu4e-dashboard*"
+  "Name of the buffer where mu4e-dashboard shows directory contents.")
+
+
+(defcustom mu4e-dashboard-window-position 'left
+  "*The position of mu4e-dashboard window."
+  :group 'mu4e-dashboard
+  :type '(choice (const left)
+                 (const right)))
+
+(defcustom mu4e-dashboard-display-action '(mu4e-dashboard-default-display-fn)
+  "*Action to use for displaying mu4e-dashboard window.
+If you change the action so it doesn't use
+`mu4e-dashboard-default-display-fn', then other variables such as
+`mu4e-dashboard-window-position' won't be respected when opening mu4e-dashboard
+window."
+  :type 'sexp
+  :group 'mu4e-dashboard)
+
+
+(defcustom mu4e-dashboard-toggle-window-keep-p nil
+  "If not nil, not switch to *mu4e-dashboard* buffer when executing `mu4e-dashboard-toggle-window'."
+  :type 'boolean
+  :group 'mu4e-dashboard)
+
+(defcustom mu4e-dashboard-window-width 30
+  "*Specifies the width of the mu4e-dashboard window."
+  :type 'integer
+  :group 'mu4e-dashboard)
+
+(defcustom mu4e-dashboard-window-fixed-size t
+  "*If the mu4e-dashboard windows is fixed, it won't be resize when rebalance windows."
+  :type 'boolean
+  :group 'mu4e-dashboard)
+
+(defvar mu4e-dashboard-global--buffer nil)
+
+(defvar mu4e-dashboard-global--window nil)
+
+
+(defmacro mu4e-dashboard-global--with-buffer (&rest body)
+  "Execute the forms in BODY with global mu4e-dashboard buffer."
+  (declare (indent 0) (debug t))
+  `(let ((mu4e-dashboard-buffer (mu4e-dashboard-global--get-buffer)))
+     (unless (null mu4e-dashboard-buffer)
+       (with-current-buffer mu4e-dashboard-buffer
+         ,@body))))
+
+
+(defmacro mu4e-dashboard-buffer--with-resizable-window (&rest body)
+  "Execute BODY in mu4e-dashboard window without `window-size-fixed' restriction."
+  `(let (rlt)
+     (mu4e-dashboard-global--with-buffer
+       (mu4e-dashboard-buffer--unlock-width))
+     (setq rlt (progn ,@body))
+     (mu4e-dashboard-global--with-buffer
+       (mu4e-dashboard-buffer--lock-width))
+     rlt))
+
+(defmacro mu4e-dashboard-global--switch-to-buffer ()
+  "Switch to mu4e-dashboard buffer."
+  `(let ((mu4e-dashboard-buffer (mu4e-dashboard-global--get-buffer)))
+     (unless (null mu4e-dashboard-buffer)
+       (switch-to-buffer mu4e-dashboard-buffer))))
+
+(defmacro mu4e-dashboard-global--with-window (&rest body)
+  "Execute the forms in BODY with global mu4e-dashboard window."
+  (declare (indent 0) (debug t))
+  `(save-selected-window
+     (mu4e-dashboard-global--select-window)
+     ,@body))
+
+
+(defun mu4e-dashboard-global--set-window-width (width)
+  "Set mu4e-dashboard window width to WIDTH."
+  (mu4e-dashboard-global--with-window
+    (mu4e-dashboard-buffer--with-resizable-window
+     (mu4e-dashboard-util--set-window-width (selected-window) width))))
+
+(defun mu4e-dashboard-util--set-window-width (window n)
+  "Make WINDOW N columns width."
+  (let ((w (max n window-min-width)))
+    (unless (null window)
+      (if (> (window-width) w)
+          (shrink-window-horizontally (- (window-width) w))
+        (if (< (window-width) w)
+            (enlarge-window-horizontally (- w (window-width))))))))
+
+
+(defun mu4e-dashboard-buffer--create ()
+  "Create and switch to mu4e-dashboard buffer."
+  (find-file mu4e-dashboard-file)
+  (rename-buffer mu4e-dashboard-buffer-name)
+  (mu4e-dashboard-activate)
+  ;; disable linum-mode
+  (when (and (boundp 'linum-mode)
+             (not (null linum-mode)))
+    (linum-mode -1))
+  (current-buffer))
+
+(defun mu4e-dashboard-global--attach ()
+  "Attach the global mu4e-dashboard buffer"
+  (setq mu4e-dashboard-global--buffer (get-buffer mu4e-dashboard-buffer-name))
+  (setq mu4e-dashboard-global--window (get-buffer-window
+                            mu4e-dashboard-global--buffer))
+  (mu4e-dashboard-global--with-buffer
+    (mu4e-dashboard-buffer--lock-width))
+  (run-hook-with-args 'mu4e-dashboard-after-create-hook '(window)))
+
+(defun mu4e-dashboard-buffer--lock-width ()
+  "Lock the width size for mu4e-dashboard window."
+  (if mu4e-dashboard-window-fixed-size
+      (setq window-size-fixed 'width)))
+
+(defun mu4e-dashboard-buffer--unlock-width ()
+  "Unlock the width size for mu4e-dashboard window."
+  (setq window-size-fixed nil))
+
+(defun mu4e-dashboard-global--reset-width ()
+  "Set mu4e-dashboard window width to `mu4e-dashboard-window-width'."
+  (mu4e-dashboard-global--set-window-width mu4e-dashboard-window-width))
+
+;;;###autoload
+(defun mu4e-dashboard-toggle-window ()
+  "Toggle show the mu4e-dashboard window."
+  (interactive)
+  (if (mu4e-dashboard-global--window-exists-p)
+      (mu4e-dashboard-hide)
+    (mu4e-dashboard-show)))
+
+;;;###autoload
+(defun mu4e-dashboard-show ()
+  "Show the mu4e-dashboard window."
+  (interactive)
+  (let ((cw (selected-window))
+        (path (buffer-file-name)))  ;; save current window and buffer
+    (mu4e-dashboard-global--select-window)
+    (mu4e-dashboard-global--open)
+    (when mu4e-dashboard-toggle-window-keep-p
+      (select-window cw))))
+
+;;;###autoload
+(defun mu4e-dashboard-hide ()
+  "Close the mu4e-dashboard window."
+  (interactive)
+  (if (mu4e-dashboard-global--window-exists-p)
+      (delete-window mu4e-dashboard-global--window)))
+
+(defun mu4e-dashboard-window--init (window buffer)
+  "Make WINDOW a mu4e-dashboard window.
+mu4e-dashboard buffer is BUFFER."
+  (mu4e-dashboard-buffer--with-resizable-window
+   (switch-to-buffer buffer)
+   (set-window-parameter window 'no-delete-other-windows t)
+   (set-window-dedicated-p window t))
+  window)
+
+(defun mu4e-dashboard-global--window-exists-p ()
+  "Return non-nil if mu4e-dashboard window exists."
+  (and (not (null (window-buffer mu4e-dashboard-global--window)))
+       (eql (window-buffer mu4e-dashboard-global--window) (mu4e-dashboard-global--get-buffer))))
+
+(defun mu4e-dashboard-global--select-window ()
+  "Select the mu4e-dashboard window."
+  (interactive)
+  (let ((window (mu4e-dashboard-global--get-window t)))
+    (select-window window)))
+
+(defun mu4e-dashboard-global--get-window (&optional auto-create-p)
+  "Return the mu4e-dashboard window if it exists, else return nil.
+But when the mu4e-dashboard window does not exist and AUTO-CREATE-P is non-nil,
+it will create the mu4e-dashboard window and return it."
+  (unless (mu4e-dashboard-global--window-exists-p)
+    (setf mu4e-dashboard-global--window nil))
+  (when (and (null mu4e-dashboard-global--window)
+             auto-create-p)
+    (setq mu4e-dashboard-global--window
+          (mu4e-dashboard-global--create-window)))
+  mu4e-dashboard-global--window)
+
+(defun mu4e-dashboard-default-display-fn (buffer _alist)
+  "Display BUFFER to the left or right of the root window.
+The side is decided according to `mu4e-dashboard-window-position'.
+The root window is the root window of the selected frame.
+_ALIST is ignored."
+  (let ((window-pos (if (eq mu4e-dashboard-window-position 'left) 'left 'right)))
+    (display-buffer-in-side-window buffer `((side . ,window-pos)))))
+
+(defun mu4e-dashboard-global--create-window ()
+  "Create global mu4e-dashboard window."
+  (let ((window nil)
+        (buffer (mu4e-dashboard-global--get-buffer t)))
+    (setq window
+          (select-window
+           (display-buffer buffer mu4e-dashboard-display-action)))
+    (mu4e-dashboard-window--init window buffer)
+    (mu4e-dashboard-global--attach)
+    (mu4e-dashboard-global--reset-width)
+    window))
+
+(defun mu4e-dashboard-global--get-buffer (&optional init-p)
+  "Return the global mu4e-dashboard buffer if it exists.
+If INIT-P is non-nil and global mu4e-dashboard buffer not exists, then create it."
+  (unless (equal (buffer-name mu4e-dashboard-global--buffer)
+                 mu4e-dashboard-buffer-name)
+    (setf mu4e-dashboard-global--buffer nil))
+  (when (and init-p
+             (null mu4e-dashboard-global--buffer))
+    (save-window-excursion
+      (setq mu4e-dashboard-global--buffer
+            (mu4e-dashboard-buffer--create))))
+  mu4e-dashboard-global--buffer)
+
+(defun mu4e-dashboard-global--alone-p ()
+  "Check whether the global mu4e-dashboard window is alone with some other window."
+  (let ((windows (window-list)))
+    (and (= (length windows)
+            2)
+         (member mu4e-dashboard-global--window windows))))
+
+(defun mu4e-dashboard-global--open ()
+  "Show the mu4e-dashboard window."
+  (mu4e-dashboard-global--get-window t))
+
 (provide 'mu4e-dashboard)
+
 ;;; mu4e-dashboard.el ends here
