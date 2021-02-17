@@ -1,0 +1,8 @@
+
+* Mailboxes                 *[[mu:flag:unread|%2d][--]]*
+
+[[mu:flag:unread][Unread]] /[[mu:flag:unread|(%3d)][(---)]]/ .... [u]  [[mu:date:today..now][Today]] /[[mu:date:today..now|(%3d)][(---)]]/ .......... [t]  *Compose* ...... [C]
+
+#+KEYMAP: u | mu4e-headers-search "flag:unread"
+#+KEYMAP: t | mu4e-headers-search "date:today..now"
+#+KEYMAP: C | mu4e-compose-new
