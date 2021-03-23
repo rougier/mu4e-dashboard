@@ -280,7 +280,10 @@ have the same size as the current description."
   (message
    (concat "[" (propertize "mu4e dashboard" 'face 'bold) "] "
            (format-time-string "Update (%H:%M)")))
-  (mu4e-dashboard-update-all-async))
+  (dolist (buffer (buffer-list (current-buffer)))
+    (with-current-buffer buffer
+      (if (bound-and-true-p mu4e-dashboard-mode)
+          (mu4e-dashboard-update-all-async)))))
 
 (defun mu4e-dashboard-parse-keymap ()
   "Parse an org file for keybindings.
