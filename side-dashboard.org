@@ -44,9 +44,6 @@
 :VISIBILITY: hideall
 :END:
 
-Call [[elisp:mu4e-dashboard-activate][mu4e-dashboard-activate]] to activate automatic update and key bindings.
-Call [[elisp:mu4e-dashboard-deactivate][mu4e-dashboard-deactivate]] before editing the dashboard
-
 #+STARTUP: showall showstars indent
 
 #+NAME: query
