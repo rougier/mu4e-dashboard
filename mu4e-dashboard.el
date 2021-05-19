@@ -107,7 +107,7 @@ mu4e with the specified QUERY (with or without the given
 LIMIT).  If FMT is specified, the description of the link is
 updated with the QUERY count formatted using the provided
 format (for example \"%4d\")."
-  
+
   (let* ((link    (org-element-context))
          (query   (string-trim (nth 0 (split-string path "|]"))))
          (fmt     (nth 1 (split-string path "|]")))
@@ -136,7 +136,7 @@ description is replaced by a string for the form \"(---)\" and
 have the same size as the current description. If the given
 format is too big for the current description, description is
 replaced with + signs."
-  
+
   (let* ((path  (org-element-property :path link))
          (query (string-trim (nth 0 (split-string path "|"))))
          (fmt   (nth 1 (split-string path "|")))
@@ -161,7 +161,7 @@ replaced with + signs."
 
 Run a shell command in an asynchronous way.  Once the call
 terminates, callback is called with the result."
-  
+
   (let* ((display-buffer-alist (list (cons "\\*Async Shell Command\\*.*"
                                        (cons #'display-buffer-no-window nil))))
          (output-buffer (generate-new-buffer "*Async Shell Command*"))
@@ -244,7 +244,7 @@ A formatted link is a link of the form
 string describing the format.  When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 having the same size as the current description."
-  
+
   (let* ((path (org-element-property :path link))
          (fmt  (nth 1 (split-string path "|")))
          (beg  (org-element-property :contents-begin link))
@@ -267,7 +267,7 @@ A formatted link is a link of the form
 string describing the format.  When a link is cleared, the
 description is replaced by a string for the form \"(---)\" and
 have the same size as the current description."
-  
+
   (org-element-map (org-element-parse-buffer) 'link
     (lambda (link)
       (when (string= (org-element-property :type link) mu4e-dashboard-link-name)
