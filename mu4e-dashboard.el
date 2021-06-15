@@ -109,9 +109,9 @@ updated with the QUERY count formatted using the provided
 format (for example \"%4d\")."
 
   (let* ((link    (org-element-context))
-         (query   (string-trim (nth 0 (split-string path "|]"))))
-         (fmt     (nth 1 (split-string path "|]")))
-         (count   (nth 2 (split-string path "|]"))))
+         (query   (string-trim (nth 0 (split-string path "[]|]"))))
+         (fmt     (nth 1 (split-string path "[]|]")))
+         (count   (nth 2 (split-string path "[]|]"))))
     (cond
      ;; Regular query without limit
      ((and (not fmt) (not count))
