@@ -319,6 +319,14 @@ to group keymaps at the same place."
            key
            (format "(lambda () (interactive) (%s))" call)))))))
 
+(defun mu4e-dashboard-open-org ()
+  "Open the mu4e-dashboard.org file."
+  (interactive)
+  (let ((file (or load-file-name (buffer-file-name))))
+    (with-current-buffer
+        (find-file (locate-file "dashboard.org" `(,(file-name-directory file))))
+      (mu4e-dashboard-mode 1))))
+
 (provide 'mu4e-dashboard)
 
 ;;; mu4e-dashboard.el ends here
