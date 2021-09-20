@@ -205,7 +205,7 @@ have the same size as the current description."
                 ;; proceed with no output, we signal an error.
                 (if (eq size 0)
                     (error "The link ``%s'' has a format clause, but no output width" path))
-                (let ((command (format "%s find %s 2> /dev/null | wc -l" mu4e-dashboard-mu-program query)))
+                (let ((command (format "%s find '%s' 2> /dev/null | wc -l" mu4e-dashboard-mu-program query)))
                   (mu4e-dashboard--async-shell-command-to-string command
                       (lambda (output)
                         (with-current-buffer buffer
