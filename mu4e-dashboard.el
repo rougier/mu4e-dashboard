@@ -115,12 +115,18 @@ format (for example \"%4d\")."
     (cond
      ;; Regular query without limit
      ((and (not fmt) (not count))
-      (mu4e-headers-search query))
-
+      (progn
+        (if (get-buffer-window "*mu4e-headers*" t)
+            (switch-to-buffer"*mu4e-headers*"))
+        (mu4e-headers-search query)))
+     
      ;; Regular query with limit
      ((and count (> (length count) 0))
-      (let ((mu4e-headers-results-limit (string-to-number count)))
-        (mu4e-headers-search query)))
+      (progn
+        (if (get-buffer-window "*mu4e-headers*" t)
+            (switch-to-buffer"*mu4e-headers*"))
+        (let ((mu4e-headers-results-limit (string-to-number count)))
+          (mu4e-headers-search query))))
 
      ;; Query count and link description update
      ((and fmt (> (length fmt) 0))
