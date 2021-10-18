@@ -68,5 +68,5 @@ mu find -n $count --sortfield=date --reverse --fields "f s" $query
 #+KEYMAP: C | mu4e-compose-new
 #+KEYMAP: U | mu4e-dashboard-update
 #+KEYMAP: ; | mu4e-context-switch
-#+KEYMAP: q | mu4e-dashboard-quit
+#+KEYMAP: q | kill-current-buffer
  
