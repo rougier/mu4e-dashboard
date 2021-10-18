@@ -25,7 +25,7 @@ write an org file with links pointing to varius queries on your mailboxes.
 The link syntax is quite intuitive:
 
 #+begin_src org
-[[mu4e:query|format|count][description]]
+[[mu:query|format|count][description]]
 #+end_src
 
 =query= must be a valid mu4e query and =count= (optional) is the maximum
@@ -33,15 +33,15 @@ number of results to be returned. When the link is clicked,
 =mu4e-headers-search= is called with the proper query.
 
 #+begin_src org
-[[mu4e:flag:unread][All unread]]
-[[mu4e:flag:unread||10][Last 10 unread]]
+[[mu:flag:unread][All unread]]
+[[mu:flag:unread||10][Last 10 unread]]
 #+end_src
 
 =format= can be used to specify that =query= results are to be counted in
 order to update the descritption using the given format:
 
 #+begin_src org
-[[mu4e:flag:unread|%3d][---]]
+[[mu:flag:unread|%3d][---]]
 #+end_src
 
 With the example above, when the link is cliked, the =---= part will be
