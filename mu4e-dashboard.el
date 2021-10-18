@@ -38,8 +38,6 @@
 
 ;;; Code:
 
-(defconst mu4e-dashboard-version "0.1")
-
 (defconst mu4e-dashboard-version "0.1.1")
 
 ;; Install the mu4e link type
