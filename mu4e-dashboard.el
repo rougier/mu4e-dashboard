@@ -224,7 +224,7 @@ have the same size as the current description."
                             (set-buffer-modified-p modified))))))))))))
   (setq mu4e-dashboard--async-update-in-progress nil))
 
-(defun mu4e-dashboard-upate-all-sync ()
+(defun mu4e-dashboard-update-all-sync ()
   "Update content of all mu4e formatted links in a synchronous way.
 
 A formatted link is a link of the form
