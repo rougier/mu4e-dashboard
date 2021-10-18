@@ -297,7 +297,7 @@ install the corresponding key bindings in the mu4e-dashboard
 minor mode keymap.  The previous keymap (if any) is erased.
 
 VALUE is composed of \"keybinding | function-call\" with
-keybidning begin a string describing a key sequence and a call to
+keybinding begin a string describing a key sequence and a call to
 an existing function. For example, to have 'q' to kill the
 current buffer, the syntax would be:
 
