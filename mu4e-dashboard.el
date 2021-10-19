@@ -57,6 +57,11 @@
   "Minor mode lighter indicating that this mode is active."
   :type 'string)
 
+(defcustom mu4e-dashboard-org-file nil
+  "Specify the dashboard.org file path."
+  :type 'string
+  :safe #'stringp)
+
 (org-link-set-parameters
  mu4e-dashboard-link-name
  :follow #'mu4e-dashboard-follow-mu4e-link)
@@ -322,6 +327,14 @@ to group keymaps at the same place."
            "mu4e-dashboard: binding %s to %s"
            key
            (format "(lambda () (interactive) (%s))" call)))))))
+
+(defun mu4e-dashboard-open-org ()
+  "Open the mu4e-dashboard.org file."
+  (interactive)
+  (let ((file (or mu4e-dashboard-org-file load-file-name (buffer-file-name))))
+    (with-current-buffer
+        (find-file (locate-file "dashboard.org" `(,(file-name-directory file))))
+      (mu4e-dashboard-mode 1))))
 
 (provide 'mu4e-dashboard)
 
