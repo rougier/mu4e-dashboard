@@ -57,6 +57,10 @@
   "Minor mode lighter indicating that this mode is active."
   :type 'string)
 
+(defcustom mu4e-dashboard-file-path "~/.emacs.d/my-mu4e-dashboard.org"
+  "Path to the dashboard org file."
+  :type 'string)
+
 (org-link-set-parameters
  mu4e-dashboard-link-name
  :follow #'mu4e-dashboard-follow-mu4e-link)
@@ -86,13 +90,16 @@ buffer is in the process of being updated asynchronously.")
         ;; general, have been setup by org-mode, but I don't want to
         ;; assume that)
         (setq mu4e-dashboard--prev-local-keymap (current-local-map))
-        (use-local-map (copy-keymap (current-local-map)))
-        (mu4e-dashboard-parse-keymap)
+	(if (string= (buffer-file-name) (expand-file-name mu4e-dashboard-file-path))
+	    (local-set-key (kbd "<return>") #'org-open-at-point))
+	(use-local-map (make-composed-keymap (mu4e-dashboard-parse-keymap) (current-local-map)))
         (add-hook 'mu4e-index-updated-hook #'mu4e-dashboard-update)
+	(add-hook 'mu4e-headers-found-hook 'mu4e-dashboard-mode)
         (mu4e-dashboard-update))
     (if mu4e-dashboard--async-update-in-progress
         (user-error "Update in progress; try again when it is complete"))
     (remove-hook 'mu4e-index-updated-hook #'mu4e-dashboard-update)
+    (remove-hook 'mu4e-headers-found-hook 'mu4e-dashboard-mode)
     (use-local-map mu4e-dashboard--prev-local-keymap)
     (setq buffer-read-only nil)))
 
@@ -306,22 +313,22 @@ current buffer, the syntax would be:
 This can be placed anywhere in the org file even though I advised
 to group keymaps at the same place."
 
-  (local-set-key (kbd "<return>") #'org-open-at-point)
-
-  (org-element-map (org-element-parse-buffer) 'keyword
-    (lambda (keyword)
-      (when (string= (org-element-property :key keyword) "KEYMAP")
-        (let* ((value (org-element-property :value keyword))
-               (key   (string-trim (nth 0 (split-string value "|"))))
-               (call  (string-trim (nth 1 (split-string value "|")))))
-          (local-set-key
-           (kbd key)
-           (eval (car (read-from-string
-                       (format "(lambda () (interactive) (%s))" call)))))
-          (message
-           "mu4e-dashboard: binding %s to %s"
-           key
-           (format "(lambda () (interactive) (%s))" call)))))))
+  (let ((map (make-sparse-keymap)))
+    (with-current-buffer (find-file-noselect mu4e-dashboard-file-path)
+      (org-element-map (org-element-parse-buffer) 'keyword
+	(lambda (keyword)
+	  (when (string= (org-element-property :key keyword) "KEYMAP")
+	    (let* ((value (org-element-property :value keyword))
+		   (key   (string-trim (nth 0 (split-string value "|"))))
+		   (call  (string-trim (nth 1 (split-string value "|")))))
+              (define-key map
+		(kbd key)
+		`(lambda () (interactive) ,(car (read-from-string (format "(%s)" call)))))
+              (message
+               "mu4e-dashboard: binding %s to %s"
+               key
+               (format "(lambda () (interactive) (%s))" call)))))))
+    map))
 
 (provide 'mu4e-dashboard)
 
