@@ -84,3 +84,9 @@ the current buffer.
 To edit the org file, you'll need to turn off =mu4e-dashboard-mode=.
 
 
+
+** Related
+
+There is a fork of this software which is designed to be used with
+[[https://notmuchmail.org/][notmuch]] instead of with mu4e. It replaces the standard =notmuch-hello=
+dashboard with an org-mode version. You can find it [[https://git.sr.ht/~inwit/org-notmuch-hello][here]].
