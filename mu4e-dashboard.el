@@ -45,7 +45,7 @@
   "Provides a new Org mode link type for mu4e queries."
   :group 'comm)
 
-(defcustom mu4e-dashboard-file "~/.emacs.d/my-mu4e-dashboard.org"
+(defcustom mu4e-dashboard-file "~/.emacs.d/mu4e-dashboard.org"
   "Path to the dashboard org file."
   :type 'string)
 
