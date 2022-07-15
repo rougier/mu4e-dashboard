@@ -112,6 +112,17 @@ buffer is in the process of being updated asynchronously.")
     (use-local-map mu4e-dashboard--prev-local-keymap)
     (setq buffer-read-only nil)))
 
+(defun mu4e-dashboard ()
+  "If the dashboard file exists, switch to it and run mu4e-dashboard-mode on it"
+  (interactive)
+  (if (file-exists-p mu4e-dashboard-file)
+      (progn
+        (find-file mu4e-dashboard-file)
+        (mu4e-dashboard-mode))
+    (message (concat mu4e-dashboard-file " does not exist"))
+    ))
+
+
 (defun mu4e-dashboard-follow-mu4e-link (path)
   "Process a mu4e link with path PATH.
 
@@ -306,7 +317,7 @@ have the same size as the current description."
           (mu4e-dashboard-update-all-async)))))
 
 (defun mu4e-dashboard-parse-keymap ()
-  "Parse an org file for keybindings.
+  "Parse the current buffer file for keybindings.
 
 Keybindings are defined by keywords of type KEYMAP:VALUE and
 install the corresponding key bindings in the mu4e-dashboard
@@ -323,19 +334,18 @@ This can be placed anywhere in the org file even though I advised
 to group keymaps at the same place."
 
   (let ((map (make-sparse-keymap)))
-    (with-current-buffer (find-file-noselect mu4e-dashboard-file)
-      (org-element-map (org-element-parse-buffer) 'keyword
-	(lambda (keyword)
-	  (when (string= (org-element-property :key keyword) "KEYMAP")
-            (let* ((value (org-element-property :value keyword))
-		   (key   (string-trim (nth 0 (split-string value "|"))))
-		   (call  (string-trim (nth 1 (split-string value "|")))))
-              (define-key map
-		(kbd key)
-		`(lambda () (interactive) ,(car (read-from-string (format "(%s)" call)))))
-              (message "mu4e-dashboard: binding %s to %s"
-		       key
-		       (format "(lambda () (interactive) (%s))" call)))))))
+    (org-element-map (org-element-parse-buffer) 'keyword
+      (lambda (keyword)
+	(when (string= (org-element-property :key keyword) "KEYMAP")
+          (let* ((value (org-element-property :value keyword))
+		 (key   (string-trim (nth 0 (split-string value "|"))))
+		 (call  (string-trim (nth 1 (split-string value "|")))))
+            (define-key map
+	      (kbd key)
+	      `(lambda () (interactive) ,(car (read-from-string (format "(%s)" call)))))
+            (message "mu4e-dashboard: binding %s to %s"
+		     key
+		     (format "(lambda () (interactive) (%s))" call))))))
     map))
 
 (provide 'mu4e-dashboard)
