@@ -94,11 +94,11 @@ buffer is in the process of being updated asynchronously.")
         ;; general, have been setup by org-mode, but I don't want to
         ;; assume that)
         (setq mu4e-dashboard--prev-local-keymap (current-local-map))
+	(use-local-map (make-composed-keymap (mu4e-dashboard-parse-keymap) (current-local-map)))
 	;; If buffer corresponds to the dashboard, add a special key (buffer-name is harcoded). Dashboard should be open with a special function naming a defcustom buffer name  and then install the minor mode. 
+	;; install the keymap as local with current map as parent (this might generate some problem?)
 	(if (string= (buffer-file-name) (expand-file-name mu4e-dashboard-file))
 	    (local-set-key (kbd "<return>") #'org-open-at-point))
-	;; install the keymap as local with current map as parent (this might generate some problem?)
-	(use-local-map (make-composed-keymap (mu4e-dashboard-parse-keymap) (current-local-map)))
 	(add-hook 'mu4e-index-updated-hook #'mu4e-dashboard-update)
 	(if mu4e-dashboard-propagate-keymap
 	;; install minor mode to mu4e headers view when called (should it be to message hook too?) 
