@@ -308,9 +308,9 @@ have the same size as the current description."
 (defun mu4e-dashboard-update ()
   "Update the current dashboard."
   (interactive)
-  (message
-   (concat "[" (propertize "mu4e dashboard" 'face 'bold) "] "
-           (format-time-string "Update (%H:%M)")))
+  ;; (message
+  ;;  (concat "[" (propertize "mu4e dashboard" 'face 'bold) "] "
+  ;;          (format-time-string "Update (%H:%M)")))
   (dolist (buffer (buffer-list (current-buffer)))
     (with-current-buffer buffer
       (if (bound-and-true-p mu4e-dashboard-mode)
