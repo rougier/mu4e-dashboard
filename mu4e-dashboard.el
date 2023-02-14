@@ -175,7 +175,8 @@ replaced with + signs."
          (end   (org-element-property :contents-end link))
          (size  (- end beg)))
     (if (and fmt (> (length fmt) 0))
-        (let* ((command (format "%s find %s 2> /dev/null | wc -l" mu4e-dashboard-mu-program query))
+        (let* ((command (format "%s find %s 2> /dev/null | wc -l" mu4e-dashboard-mu-program
+                                (shell-quote-argument query)))
                (output (string-to-number (shell-command-to-string command)))
                (output  (format fmt output)))
           (let ((modified (buffer-modified-p))
