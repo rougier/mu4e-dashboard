@@ -143,11 +143,9 @@ buffer is in the process of being updated asynchronously.")
       (progn
         (message (concat "bookmark not found: " bm))
         bm))))
-                 
+
 (defun mu4e-dashboard-expand-bookmarks-in-query (st)
   "if st contains a bookmark, replace it by its corresponding query, otherwise return st unchanged"
-;; we take advantage of the fact that many of the calls below return nil if the parameter is nil
-;; this avoids a long sequence of if statements
   (let ((bookmark-re "\\(bm:[^ ]+\\)")
          )
     (replace-regexp-in-string bookmark-re 'mu4e-dashboard-translate-bookmark-to-query  st)
