@@ -38,7 +38,7 @@ number of results to be returned. When the link is clicked,
 #+end_src
 
 =format= can be used to specify that =query= results are to be counted in
-order to update the descritption using the given format:
+order to update the description using the given format:
 
 #+begin_src org
 [[mu:flag:unread|%3d][---]]
@@ -46,6 +46,38 @@ order to update the descritption using the given format:
 
 With the example above, when the link is cliked, the =---= part will be
 replaced by the number of unread mails.
+
+*** Using mu4e-bookmarks
+
+Queries can include references to mu4e-bookmarks. A bookmark is denoted with
+~bm:<bookmarkName>~
+ 
+~bookmarkName~ cannot contain spaces nor ]. A query can contain several bookmarks,
+but their expansion is not recursive.
+
+For example, assuming the following bookmark exists:
+
+#+begin_src emacs-lisp   :exports both
+(add-to-list 'mu4e-bookmarks
+     '(:name "Unread"
+           :query "flag:unread and not flag:trashed"
+           :key ?f)
+     t)
+#+end_src
+
+the dashboard query:
+
+#+begin_src emacs-lisp   :exports both
+mu:bm:Unread and date:7d..now
+#+end_src
+
+will be expanded to:
+
+#+begin_src emacs-lisp   :exports both
+mu:(flag:unread and not flag:trashed) and date:7d..now
+#+end_src
+
+Note that parenthesis are added around the bookmark to make sure the expansion is hygienic.
 
 *** Key bindings
 

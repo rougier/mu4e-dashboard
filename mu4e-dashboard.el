@@ -122,6 +122,34 @@ buffer is in the process of being updated asynchronously.")
     (message (concat mu4e-dashboard-file " does not exist"))
     ))
 
+(defun mu4e-dashboard-compare-bookmark-name (bookmark field-name st)
+  "compare st to the field field-name in the bookmark"
+  (equal (plist-get bookmark field-name) st))
+
+(defun mu4e-dashboard-find-bookmark (name)
+  "convert a mu4e bookmark to a query"
+  (if name
+      (cl-find-if (lambda (a) (mu4e-dashboard-compare-bookmark-name a :name name                                                                   ))
+                  mu4e-bookmarks)))
+
+(defun mu4e-dashboard-translate-bookmark-to-query (bm)
+  "translate a bm:<bookmarkName> into the mu4e query. Gets called by the regexp replacement"
+  (let ( ;; remove "bm:" from the begining of the name
+        (bookmark (mu4e-dashboard-find-bookmark (substring bm 3)))
+        )
+    (if bookmark
+        ;; put parenthesis around to make it hygenic
+          (concat "("(plist-get bookmark :query) ")")
+      (progn
+        (message (concat "bookmark not found: " bm))
+        bm))))
+
+(defun mu4e-dashboard-expand-bookmarks-in-query (st)
+  "if st contains a bookmark, replace it by its corresponding query, otherwise return st unchanged"
+  (let ((bookmark-re "\\(bm:[^ ]+\\)")
+         )
+    (replace-regexp-in-string bookmark-re 'mu4e-dashboard-translate-bookmark-to-query  st)
+    ))
 
 (defun mu4e-dashboard-follow-mu4e-link (path)
   "Process a mu4e link with path PATH.
@@ -134,13 +162,15 @@ updated with the QUERY count formatted using the provided
 format (for example \"%4d\")."
 
   (let* ((link    (org-element-context))
-         (query   (string-trim (nth 0 (split-string path "[]|]"))))
+         (queryname   (string-trim (nth 0 (split-string path "[]|]"))))
+         (query   (mu4e-dashboard-expand-bookmarks-in-query queryname))
          (fmt     (nth 1 (split-string path "[]|]")))
          (count   (nth 2 (split-string path "[]|]"))))
     (cond
      ;; Regular query without limit
      ((and (not fmt) (not count))
       (progn
+        (message query)
         (if (get-buffer-window "*mu4e-headers*" t)
             (switch-to-buffer"*mu4e-headers*"))
         (mu4e-headers-search query)))
@@ -169,7 +199,8 @@ format is too big for the current description, description is
 replaced with + signs."
 
   (let* ((path  (org-element-property :path link))
-         (query (string-trim (nth 0 (split-string path "|"))))
+         (queryname (string-trim (nth 0 (split-string path "|"))))
+         (query   (mu4e-dashboard-expand-bookmarks-in-query queryname))
          (fmt   (nth 1 (split-string path "|")))
          (beg   (org-element-property :contents-begin link))
          (end   (org-element-property :contents-end link))
