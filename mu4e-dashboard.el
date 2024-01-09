@@ -1,13 +1,13 @@
 ;;; mu4e-dashboard.el --- Dashboards for mu4e   -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2021 Nicolas P. Rougier
+;; Copyright (C) 2020-2024 Nicolas P. Rougier
 
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/mu4e-dashboard
 ;; Keywords: convenience
-;; Version: 0.1.1
+;; Version: 0.2
 
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "27.1") (mu4e) (async) (org))
 
 ;; This file is not part of GNU Emacs.
 
@@ -29,14 +29,23 @@
 ;; mu4e-dashboard provides enhanced org-mode links that allow you to
 ;; define custom dashboards that link back to the mu4e email client.
 ;;
+;;
+;;; NEWS:
+;;
+;;
+;; Version 0.2
+;; - Handle async requests with the async library
 
+;; Version 0.1
+;; - initial release
 
+;;; Code:
 (require 'subr-x)
 (require 'ob-shell)
 (require 'org)
+(require 'async)
 (require 'mu4e-headers)
 
-;;; Code:
 
 (defconst mu4e-dashboard-version "0.1.1")
 
@@ -94,15 +103,18 @@ buffer is in the process of being updated asynchronously.")
         ;; general, have been setup by org-mode, but I don't want to
         ;; assume that)
         (setq mu4e-dashboard--prev-local-keymap (current-local-map))
-	(use-local-map (make-composed-keymap (mu4e-dashboard-parse-keymap) (current-local-map)))
-	;; If buffer corresponds to the dashboard, add a special key (buffer-name is harcoded). Dashboard should be open with a special function naming a defcustom buffer name  and then install the minor mode. 
-	;; install the keymap as local with current map as parent (this might generate some problem?)
-	(if (string= (buffer-file-name) (expand-file-name mu4e-dashboard-file))
-	    (local-set-key (kbd "<return>") #'org-open-at-point))
-	(add-hook 'mu4e-index-updated-hook #'mu4e-dashboard-update)
-	(if mu4e-dashboard-propagate-keymap
-	;; install minor mode to mu4e headers view when called (should it be to message hook too?) 
-	(add-hook 'mu4e-headers-found-hook #'mu4e-dashboard-mode))
+	    (use-local-map (make-composed-keymap (mu4e-dashboard-parse-keymap) (current-local-map)))
+	    ;; If buffer corresponds to the dashboard, add a special key
+	    ;; (buffer-name is harcoded). Dashboard should be open with a
+	    ;; special function naming a defcustom buffer name and then
+	    ;; install the minor mode.  install the keymap as local with
+	    ;; current map as parent (this might generate some problem?)
+	    (if (string= (buffer-file-name) (expand-file-name mu4e-dashboard-file))
+	        (local-set-key (kbd "<return>") #'org-open-at-point))
+	    (add-hook 'mu4e-index-updated-hook #'mu4e-dashboard-update)
+	    (if mu4e-dashboard-propagate-keymap
+	        ;; install minor mode to mu4e headers view when called (should it be to message hook too?) 
+	        (add-hook 'mu4e-headers-found-hook #'mu4e-dashboard-mode))
         (mu4e-dashboard-update))
     (if mu4e-dashboard--async-update-in-progress
         (user-error "Update in progress; try again when it is complete"))
@@ -219,26 +231,6 @@ replaced with + signs."
                         (make-string size ?+))))
             (set-buffer-modified-p modified))))))
 
-(defun mu4e-dashboard--async-shell-command-to-string (command callback)
-  "Run COMMAND asynchronously; call CALLBACK on completion.
-
-Run a shell command in an asynchronous way.  Once the call
-terminates, callback is called with the result."
-
-  (let* ((display-buffer-alist (list (cons "\\*Async Shell Command\\*.*"
-                                       (cons #'display-buffer-no-window nil))))
-         (output-buffer (generate-new-buffer "*Async Shell Command*"))
-         (proc (progn
-                 (async-shell-command command output-buffer)
-                 (get-buffer-process output-buffer))))
-    (if (process-live-p proc)
-        (set-process-sentinel proc
-                              (lambda (process _signal)
-                                (when (memq (process-status process) '(exit signal))
-                                  (with-current-buffer output-buffer
-                                    (funcall callback (buffer-string)))
-                                  (kill-buffer output-buffer))))
-      (message "No process running."))))
 
 (defun mu4e-dashboard-update-all-async ()
   "Update content of all formatted mu4e links in an asynchronous way.
@@ -268,20 +260,27 @@ have the same size as the current description."
                 ;; proceed with no output, we signal an error.
                 (if (eq size 0)
                     (error "The link ``%s'' has a format clause, but no output width" path))
-                (let ((command (format "%s find '%s' 2> /dev/null | wc -l" mu4e-dashboard-mu-program query)))
-                  (mu4e-dashboard--async-shell-command-to-string command
-                      (lambda (output)
-                        (with-current-buffer buffer
-                          (let ((modified (buffer-modified-p))
-                                (inhibit-read-only t)
-                                (output (format fmt (string-to-number output))))
-                            (save-excursion
-                              (delete-region beg end)
-                              (goto-char beg)
-                              (insert (if (<= (length output) size) output
-                                        (make-string size ?+))))
-                            (set-buffer-modified-p modified))))))))))))
+
+                (async-start
+                 (lambda ()
+                   (let ((command (format "mu find %s 2> /dev/null | wc -l"
+                                          (shell-quote-argument query))))
+                     (string-to-number (shell-command-to-string command))))
+                 (lambda (count)
+                   (with-current-buffer buffer
+                     (let ((modified (buffer-modified-p))
+                           (inhibit-read-only t)
+                           (output (if (numberp count)
+                                       (format fmt count)
+                                     (format fmt 0))))
+                       (save-excursion
+                         (delete-region beg end)
+                         (goto-char beg)
+                         (insert (if (<= (length output) size) output
+                                   (make-string size ?+))))
+                       (set-buffer-modified-p modified)))))))))))
   (setq mu4e-dashboard--async-update-in-progress nil))
+
 
 (defun mu4e-dashboard-update-all-sync ()
   "Update content of all mu4e formatted links in a synchronous way.
@@ -381,5 +380,4 @@ to group keymaps at the same place."
     map))
 
 (provide 'mu4e-dashboard)
-
 ;;; mu4e-dashboard.el ends here
