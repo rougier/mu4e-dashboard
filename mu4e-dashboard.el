@@ -71,7 +71,7 @@
   :type 'string)
 
 (defcustom mu4e-dashboard-propagate-keymap t
-  "Propagate dashboard defined keymap to mu4e header view"
+  "Propagate dashboard defined keymap to mu4e header view."
   :type 'boolean)
 
 (org-link-set-parameters
@@ -113,7 +113,8 @@ buffer is in the process of being updated asynchronously.")
 	        (local-set-key (kbd "<return>") #'org-open-at-point))
 	    (add-hook 'mu4e-index-updated-hook #'mu4e-dashboard-update)
 	    (if mu4e-dashboard-propagate-keymap
-	        ;; install minor mode to mu4e headers view when called (should it be to message hook too?) 
+	        ;; install minor mode to mu4e headers view when called
+	        ;; (should it be to message hook too?)
 	        (add-hook 'mu4e-headers-found-hook #'mu4e-dashboard-mode))
         (mu4e-dashboard-update))
     (if mu4e-dashboard--async-update-in-progress
@@ -125,7 +126,7 @@ buffer is in the process of being updated asynchronously.")
     (setq buffer-read-only nil)))
 
 (defun mu4e-dashboard ()
-  "If the dashboard file exists, switch to it and run mu4e-dashboard-mode on it"
+  "Open the dashboard (usin mu4e-dashboard-file)."
   (interactive)
   (if (file-exists-p mu4e-dashboard-file)
       (progn
@@ -135,17 +136,17 @@ buffer is in the process of being updated asynchronously.")
     ))
 
 (defun mu4e-dashboard-compare-bookmark-name (bookmark field-name st)
-  "compare st to the field field-name in the bookmark"
+  "Compare ST to the field FIELD-NAME in the BOOKMARK."
   (equal (plist-get bookmark field-name) st))
 
 (defun mu4e-dashboard-find-bookmark (name)
-  "convert a mu4e bookmark to a query"
+  "Convert a mu4e bookmark NAME to a query."
   (if name
       (cl-find-if (lambda (a) (mu4e-dashboard-compare-bookmark-name a :name name                                                                   ))
                   mu4e-bookmarks)))
 
 (defun mu4e-dashboard-translate-bookmark-to-query (bm)
-  "translate a bm:<bookmarkName> into the mu4e query. Gets called by the regexp replacement"
+  "Translates a BM:<bookmarkName> into a mu4e query."
   (let ( ;; remove "bm:" from the begining of the name
         (bookmark (mu4e-dashboard-find-bookmark (substring bm 3)))
         )
@@ -157,7 +158,7 @@ buffer is in the process of being updated asynchronously.")
         bm))))
 
 (defun mu4e-dashboard-expand-bookmarks-in-query (st)
-  "if st contains a bookmark, replace it by its corresponding query, otherwise return st unchanged"
+  "Replace ST by the corresponding query if ST contain a bookmark."
   (let ((bookmark-re "\\(bm:[^ ]+\\)")
          )
     (replace-regexp-in-string bookmark-re 'mu4e-dashboard-translate-bookmark-to-query  st)
