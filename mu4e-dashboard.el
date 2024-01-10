@@ -43,8 +43,10 @@
 (require 'subr-x)
 (require 'ob-shell)
 (require 'org)
+(require 'org-element)
 (require 'async)
 (require 'mu4e-headers)
+(require 'mu4e-search)
 
 
 (defconst mu4e-dashboard-version "0.1.1")
@@ -186,7 +188,7 @@ format (for example \"%4d\")."
         (message query)
         (if (get-buffer-window "*mu4e-headers*" t)
             (switch-to-buffer"*mu4e-headers*"))
-        (mu4e-headers-search query)))
+        (mu4e-search query)))
      
      ;; Regular query with limit
      ((and count (> (length count) 0))
@@ -194,7 +196,7 @@ format (for example \"%4d\")."
         (if (get-buffer-window "*mu4e-headers*" t)
             (switch-to-buffer"*mu4e-headers*"))
         (let ((mu4e-headers-results-limit (string-to-number count)))
-          (mu4e-headers-search query))))
+          (mu4e-search query))))
 
      ;; Query count and link description update
      ((and fmt (> (length fmt) 0))
@@ -357,7 +359,7 @@ minor mode keymap.  The previous keymap (if any) is erased.
 
 VALUE is composed of \"keybinding | function-call\" with
 keybinding begin a string describing a key sequence and a call to
-an existing function. For example, to have 'q' to kill the
+an existing function.  For example, to have \"q\" to kill the
 current buffer, the syntax would be:
 
 #+KEYMAP: q | kill-current-buffer
