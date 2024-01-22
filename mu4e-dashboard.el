@@ -35,6 +35,9 @@
 ;;
 ;; Version 0.2
 ;; - Handle async requests with the async library
+;; - Fix package warnings
+;; - Added support for mu4e bookmarks
+;; - Key bindings from mu4e can be used
 
 ;; Version 0.1
 ;; - initial release
@@ -195,7 +198,8 @@ format (for example \"%4d\")."
       (progn
         (if (get-buffer-window "*mu4e-headers*" t)
             (switch-to-buffer"*mu4e-headers*"))
-        (let ((mu4e-headers-results-limit (string-to-number count)))
+        (let ((mu4e-search-results-limit (string-to-number count)))
+          (ignore mu4e-search-results-limit)
           (mu4e-search query))))
 
      ;; Query count and link description update
@@ -347,8 +351,10 @@ have the same size as the current description."
   ;;          (format-time-string "Update (%H:%M)")))
   (dolist (buffer (buffer-list (current-buffer)))
     (with-current-buffer buffer
-      (if (bound-and-true-p mu4e-dashboard-mode)
-          (mu4e-dashboard-update-all-async)))))
+      (when (bound-and-true-p mu4e-dashboard-mode)
+        (if buffer-read-only
+            (mu4e-dashboard-update-all-async)
+          (error "Dashboard cannot be updated only in read-only mode"))))))
 
 (defun mu4e-dashboard-parse-keymap ()
   "Parse the current buffer file for keybindings.
