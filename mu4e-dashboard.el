@@ -274,18 +274,21 @@ have the same size as the current description."
                                           (shell-quote-argument query))))
                      (string-to-number (shell-command-to-string command))))
                  (lambda (count)
-                   (with-current-buffer buffer
-                     (let ((modified (buffer-modified-p))
-                           (inhibit-read-only t)
-                           (output (if (numberp count)
-                                       (format fmt count)
-                                     (format fmt 0))))
-                       (save-excursion
-                         (delete-region beg end)
-                         (goto-char beg)
-                         (insert (if (<= (length output) size) output
-                                   (make-string size ?+))))
-                       (set-buffer-modified-p modified)))))))))))
+                   ;; Guard against the scenario where async process finishes
+                   ;; after the dashboard buffer has been killed.
+                   (when (buffer-live-p buffer)
+                     (with-current-buffer buffer
+                       (let ((modified (buffer-modified-p))
+                             (inhibit-read-only t)
+                             (output (if (numberp count)
+                                         (format fmt count)
+                                       (format fmt 0))))
+                         (save-excursion
+                           (delete-region beg end)
+                           (goto-char beg)
+                           (insert (if (<= (length output) size) output
+                                     (make-string size ?+))))
+                         (set-buffer-modified-p modified))))))))))))
   (setq mu4e-dashboard--async-update-in-progress nil))
 
 
